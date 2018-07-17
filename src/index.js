@@ -6,39 +6,41 @@ import registerServiceWorker from './registerServiceWorker';
 
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import reducer from './reducer'
 
-const initialState = {
-    shows: [],
-    selectedShow: null,
-    searchTerm: "",
-}
+// const initialState = {
+//     showLoginPage: false,
+//     // shows: [],
+//     // selectedShow: null,
+//     // searchTerm: "",
+// }
 
 
-const reducer = (state = initialState, action, id) => {
-    console.log('state', state);
-    console.log('action', action);
-    console.log('id:arg', id);
-    console.log('id:meow', action.id);
+// const reducer = (state = initialState, action, id) => {
+//     console.log('state', state);
+//     console.log('action', action);
+//     // console.log('id:arg', id);
+//     // console.log('id:meow', action.id);
 
-    switch(action.type) {
-      case "CLICK_EVENT":
-        const { data } = action.payload;
-        let found = state.shows.find( e => e.id === data)
-        return {...state, selectedShow: found }
+//     switch(action.type) {
+//       case "CLICK_EVENT":
+//         const { data } = action.payload;
+//         let found = state.shows.find( e => e.id === data)
+//         return {...state, selectedShow: found }
 
-      case "LOAD_EVENT":
-        return { ...state, shows: action.payload.data }
-      case "SEARCH_EVENT":
-        return { ...state, searchTerm: action.payload.data }
-    //   case "TOGGLE_DANCING":
-    //     return { ...state, dancing: !state.dancing }
-    //   case "SET_COUNTER":
-    //     return { ...state, counter: action.payload.value }
-      default:
-        return state;
-    }
+//       case "LOAD_EVENT":
+//         return { ...state, shows: action.payload.data }
+//       case "LOGIN_EVENT":
+//         return { ...state, showLoginPage: action.payload.data }
+//     //   case "TOGGLE_DANCING":
+//     //     return { ...state, dancing: !state.dancing }
+//     //   case "SET_COUNTER":
+//     //     return { ...state, counter: action.payload.value }
+//       default:
+//         return state;
+//     }
   
-  }
+//   }
 
 const store = createStore(reducer);
 
