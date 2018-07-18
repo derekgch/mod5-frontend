@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import BlankBox from './BlankBox'
 
 class Question extends Component {
 
@@ -8,6 +9,7 @@ class Question extends Component {
 
 
     render() {
+        let question = "1+1 =2"
         let posX, posY
         const textStyle = {
             fontFamily: "COURIER",
@@ -17,8 +19,7 @@ class Question extends Component {
 
 
         return (
-            <div>
-                <svg height="600" width="1000" style={{border: "1px solid #2196F3"}} viewBox="-10 -10 500 600">
+            <React.Fragment>
                 <g>
                     {/* <path d="M 20 20 C 20 110, 110 110, 110 20" stroke="green" fill="transparent"/>
 
@@ -32,20 +33,20 @@ class Question extends Component {
                     <text x="-90" y="95" {...textStyle}>
                         1  {this.amine(-90)}
                     </text>
-                    <rect  x="-10" y="35" height="50" width="50" fill="none" stroke="#ff8a65" stroke-width="4">
-                    {this.amine(-20)}
-                    </rect>
+                    <BlankBox start={-15}/>
+
                     <text x="40" y="95" {...textStyle}>1=2  {this.amine(40)}</text>
                     
                     </g>
+
                 
                 {/* <g fill="white" stroke="green" stroke-width="5">
                     <circle cx="40" cy="100" r="2" />
                     <circle cx="60" cy="60" r="5" />
                 </g> */}
                 </g>
-                </svg> 
-            </div>
+                
+            </React.Fragment>
         );
     }
 }
