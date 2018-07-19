@@ -11,11 +11,11 @@ class FirePlatform extends Component {
 
 
     render() {
-        let testPath = this.translatePosition(500, 500)
+        let testPath = this.translatePosition(this.props.x, this.props.y)
         console.log(testPath)
 
         return (
-            <React.Fragment>
+            <React.Fragment >
                 <path d={testPath}  fill="#FF8A65" stroke="#95a5a6" strokeWidth="5" />
             </React.Fragment>
         );

@@ -24,21 +24,12 @@ class App extends Component {
       </div>
     );
   }
+  
   handleLogout=()=>{
     this.props.logOut("LOGOUT_EVENT");
     localStorage.removeItem("token");
   }
 
-  // setSearch=(data)=> {
-  //   const action = {
-  //     type: "LOAD_EVENT", // variety of things
-  //     payload: {
-  //       data: data,
-  //       // value: event.target.value,
-  //     } // bunch of stuff being delivered
-  //   }
-  //   this.props.dispatch(action);
-  // }
 
 
 }

@@ -9,7 +9,7 @@ class BlankBox extends Component {
             <React.Fragment>
                 
                 <rect  x={this.props.start} y="35" height="50" width="50" fill="none" stroke="#ff8a65" strokeWidth="4">
-                    {this.amine(this.props.start)}
+                    {/* {this.amine(this.props.start)} */}
                 </rect>
             </React.Fragment>
         );
