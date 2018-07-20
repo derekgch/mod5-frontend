@@ -28,9 +28,10 @@
 }
 
 
-/* .questionContainer {
-
-} */
+.questionContainer {
+  position: absolute;  
+  top: 10vw;
+}
 
 /* .projectile{
 

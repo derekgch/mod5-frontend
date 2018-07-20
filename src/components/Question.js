@@ -22,10 +22,10 @@ class Question extends Component {
     }
     
 
-    shouldComponentUpdate(nextProps){
-        if(nextProps.hit) return true;
-        return false;
-    }
+    // shouldComponentUpdate(nextProps){
+    //     if(nextProps.hit) return true;
+    //     return false;
+    // }
 
     render() {
 
@@ -35,6 +35,7 @@ class Question extends Component {
             fill: '#fffff',
           };
 
+
           const Move = styled.div`
           animation: ${moveHorizontally} 30s linear;
           position: absolute;
@@ -43,7 +44,7 @@ class Question extends Component {
         `;
 
         return (
-            <Move>
+
             <svg >                
                 <g>
                     <text x="-90" y="95" {...textStyle}>
@@ -54,7 +55,7 @@ class Question extends Component {
                     <text x="40" y="95" {...textStyle}>1=2  </text>                  
                     </g>
             </svg>
-            </Move>
+
         );
     }
 }
