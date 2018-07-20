@@ -13,6 +13,14 @@ const moveHorizontally = keyframes`
 `;
 
 class Question extends Component {
+    constructor(props) {
+        super(props);
+        this.state={
+            x: this.props.x,
+            y: this.props.y,
+        }
+    }
+    
 
     shouldComponentUpdate(nextProps){
         if(nextProps.hit) return true;

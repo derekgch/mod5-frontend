@@ -9,6 +9,10 @@ class GameContainer extends Component {
 
     handleMove=(event) => {
         // console.log(event.key)
+        let left = document.getElementsByClassName("questionContainer")
+        debugger
+        console.log("pos", left)
+
         const now = (new Date()).getTime();
         let active = this.props.fired
         if(this.props.fired.length > 0){
@@ -58,8 +62,10 @@ class GameContainer extends Component {
 
     handleRefs = (el) => {
         console.log("ref here")
+
         console.log(this.a.getBoundingClientRect())
         console.log(el.getBoundingClientRect())
+
     }
 
     render() {
