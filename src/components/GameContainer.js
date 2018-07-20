@@ -5,67 +5,95 @@ import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite} from "gsap/TweenMax";
+import { simpleMath, calAnswer, ops } from "./GenerateQuestions";
+
 
 class GameContainer extends Component {
     state = {
-
+        opIndex: 0,
+        question: null,
+        answer: null
     }
+
     componentDidMount(){
-        
+        let eq = simpleMath(2,1);
+        let ans = calAnswer(eq);
+        this.setState({question:eq, answer:ans})
         let qCnt = this.refs.qContainer;
-        this.flyBy(qCnt, 15, "qContainer", 0.1);
+        this.flyRight(qCnt, 15, "qContainer", 0.1);
         
-        this.interval = setInterval(this.getCoor, 200); 
-
+        // this.interval = setInterval(this.getCoor, 200); 
     }
 
-    componentDidUpdate(prevesProp){
+   componentWillUnmount(){
+    clearInterval(this.interval)
+   }
 
-    }
+   clearIntervalFn = () => {
+    clearInterval(this.interval)
+   }
 
-    getCoor=()=>{
-        let qCnt = this.refs.qContainer;
-        console.log(qCnt.getBoundingClientRect());
-    }
+
+   collided = (bulletTime) =>{
+    let active = this.props.fired.filter( e => e.time !== bulletTime)
+    this.props.updateFired("UPDATE_FIRE", active)
+   }
+
+
+   cycleOp=(keyup, level=0) => {
+    let index = this.state.opIndex;
+        if(keyup){
+            index++;
+        }else{
+            index --;
+        }
+        if(level === 0){
+            if(index <0) index = 1
+            index = index%2
+        }
+        
+        this.setState({opIndex:index})
+   }
+
 
     handleMove=(event) => {
-        // console.log(event.key)
 
         const now = (new Date()).getTime();
         let active = this.props.fired
         if(this.props.fired.length > 0){
-            active = this.props.fired.filter( e => (now - e.time)< 5000)
+            active = this.props.fired.filter( e => (now - e.time)< 6000)
             this.props.updateFired("UPDATE_FIRE", active)
        }
 
         switch (event.key) {
             case 'ArrowLeft':
-            event.preventDefault();
+                event.preventDefault();
                 console.log("move left")
-
                 this.props.moveBasePos("MOVE_EVENT",{left:true, value:10})
                 break;
+
             case 'ArrowRight':
-            event.preventDefault();
-
-            console.log("move right")
+                event.preventDefault();
+                console.log("move right")
                 this.props.moveBasePos("MOVE_EVENT",{left:false, value:10})
-            break;
+                break;
+
             case 'ArrowDown':
-            console.log("move down")
+                console.log("move down")
+                this.cycleOp(false)
+                break;
 
-            break;
             case 'ArrowUp':
-            console.log("move up")
-
-            break;
+                console.log("move up")
+                this.cycleOp(true)
+                break;
 
             case ' ':
                 console.log("space")
                 if((now-this.props.lastFired) > 500){
                     this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
                 }
-            break;
+                break;
         
             default:
                 break;
@@ -73,38 +101,31 @@ class GameContainer extends Component {
  
     }
 
-    flyBy =(el, amt, name, delay)=> {
-        
-        let obj = {},
-            offset = document.getElementById('gameContainer').offsetHeight/2,
-            randY = Math.random() * (offset - 1) + 1;
-        obj[name] = false;
-        this.setState(obj);
     
+    flyRight =(el, amt, name, delay)=> {
         TweenMax.fromTo(el, amt, {
           y:100, 
           x: 0
         }, {
-          x: window.innerWidth + 200,
+          x: window.innerWidth-300,
           y:100,
           rotation: 0,
           delay: delay, 
-          onComplete:this.flyBy,
+          onComplete:this.clearIntervalFn,
           onCompleteParams:[el, amt, name, delay],
           ease: Power1.easeInOut
         });
       }
     
     projectile=(now)=>{
-        return {data: <Bullet hit={false} position={{x:0, y:70}} startAt={this.props.basePos} key={UUID()}/>, time:now}
-    }
-
-    handleRefs = (el) => {
-        console.log("ref here")
-
-        console.log(this.a.getBoundingClientRect())
-        console.log(el.getBoundingClientRect())
-
+        return {data: <Bullet hit={false} 
+        position={{x:0, y:70}} 
+        qContainer = {this.refs.qContainer}
+        startAt={this.props.basePos} 
+        collided ={this.collided}
+        op = {ops[this.state.opIndex]}
+        key={UUID()} 
+        time={now}/>, time:now}
     }
 
     render() {
@@ -114,13 +135,15 @@ class GameContainer extends Component {
             <div tabIndex="0" onKeyDown={this.handleMove} id="gameContainer">
                 <div>
                     <svg height="600" width="1000" >
-                    <FirePlatform x={this.props.basePos} y={500}
+        
+                    <FirePlatform x={this.props.basePos} y={500}  
+                                op = {ops[this.state.opIndex]}
                     />
                     </svg>
                 </div>
 
                 <div className='questionContainer'  ref ="qContainer">
-                    <Question /> 
+                    <Question eq={this.state.question} ans={this.state.answer}/> 
                 </div>
                 {this.props.fired.map(e => e.data)}
             </div>
@@ -142,7 +165,8 @@ function mapDispathToProps(dispatch){
         moveBasePos: (type, data) => dispatch({type: type, payload:{data} }),
         setQPos: (type, data) => dispatch({type: type, payload:{data} }),
         setFired: (type, data, time) => dispatch({type: type, payload:{data}, time}),
-        updateFired: (type, data) => dispatch({type, payload:{data}})
+        updateFired: (type, data) => dispatch({type, payload:{data}}),
+        clearBullet: (type, data) => dispatch({type, payload:{data}}),
         
     }
 }

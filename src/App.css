@@ -30,10 +30,11 @@
 
 .questionContainer {
   position: absolute;  
-  top: 10vw;
+  top: 0vw;
 }
 
-/* .projectile{
+.bullet{
+  position: absolute;  
+  top: 0vw;
 
-
-} */
+}

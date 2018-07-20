@@ -23,7 +23,7 @@ const addLoggingToDispatch = (store) => {
   }
 }
 
-store.dispatch = addLoggingToDispatch(store);
+// store.dispatch = addLoggingToDispatch(store);
 
 console.log(store);
 console.log('after createStore', store.getState());
