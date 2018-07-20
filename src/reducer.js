@@ -46,15 +46,13 @@ function reducer (state = initialState, action) {
 
             return { ...state, fired: action.payload.data, lastFired: action.time }
 
-        case 'UPDATE_FIRE':
+          case 'UPDATE_FIRE':
             return {...state, fired: action.payload.data}
         //   case "SET_COUNTER":
         //     return { ...state, counter: action.payload.value }
             default:
             return state;
-        }
-      
-      
+        }      
 }
 
 export default reducer;

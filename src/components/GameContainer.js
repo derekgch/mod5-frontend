@@ -5,38 +5,67 @@ import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite} from "gsap/TweenMax";
-import { simpleMath, calAnswer, ops } from "./GenerateQuestions";
+import { simpleMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
 
 
 class GameContainer extends Component {
     state = {
         opIndex: 0,
         question: null,
-        answer: null
+        answer: null,
+        filledOp: [],
+        box:2,
+        userEq:[],
     }
 
     componentDidMount(){
-        let eq = simpleMath(2,1);
-        let ans = calAnswer(eq);
-        this.setState({question:eq, answer:ans})
+        this.genNewEq();
         let qCnt = this.refs.qContainer;
         this.flyRight(qCnt, 15, "qContainer", 0.1);
         
-        // this.interval = setInterval(this.getCoor, 200); 
     }
 
-   componentWillUnmount(){
-    clearInterval(this.interval)
-   }
-
-   clearIntervalFn = () => {
-    clearInterval(this.interval)
-   }
+    genNewEq=()=>{
+        let eq = simpleMath(1,this.state.box);
+        let ans = calAnswer(eq);
+        this.setState({question:eq, answer:ans, filledOp:[]})
+    }
 
 
    collided = (bulletTime) =>{
+    let found = this.props.fired.find( e => e.time === bulletTime)
+    this.setState({filledOp: [...this.state.filledOp, found.op]}, this.checkAnswer)
+
     let active = this.props.fired.filter( e => e.time !== bulletTime)
     this.props.updateFired("UPDATE_FIRE", active)
+
+   }
+
+   checkAnswer=() => {
+      if(this.state.filledOp.length >= this.state.box && this.state.question.length > 0){
+        let userEq = swapOP(this.state.question, this.state.filledOp) 
+            if(calAnswer(userEq) !== this.state.answer){
+                this.setState({filledOp:[]})
+            }else{
+                this.genNewEq();
+            }
+        }
+    }
+
+   shouldComponentUpdate(nextProps, nextState){
+   
+    // if(this.state.filledOp.length >= this.state.box && this.state.eq.length > 0){
+    //     let userEq = swapOP(this.state.eq, this.state.filledOp) 
+    //     if(calAnswer(userEq) !== this.state.answer){
+    //         this.setState({filledOp:[]})
+    //     }else{
+    //         this.genNewEq();
+    //     }
+    //     return true;
+    // }else{
+    //     return false;
+    // }
+    return true;
    }
 
 
@@ -47,11 +76,10 @@ class GameContainer extends Component {
         }else{
             index --;
         }
-        if(level === 0){
+        if(level === 0){ //only + and - operations
             if(index <0) index = 1
             index = index%2
-        }
-        
+        }       
         this.setState({opIndex:index})
    }
 
@@ -98,7 +126,6 @@ class GameContainer extends Component {
             default:
                 break;
         }
- 
     }
 
     
@@ -111,7 +138,22 @@ class GameContainer extends Component {
           y:100,
           rotation: 0,
           delay: delay, 
-          onComplete:this.clearIntervalFn,
+          onComplete:this.flyLeft,
+          onCompleteParams:[el, amt, name, delay],
+          ease: Power1.easeInOut
+        });
+      }
+
+      flyLeft =(el, amt, name, delay)=> {
+        TweenMax.fromTo(el, amt, {
+          y:100, 
+          x: window.innerWidth-300
+        }, {
+          x: 0,
+          y:100,
+          rotation: 0,
+          delay: delay, 
+          onComplete:this.flyRight,
           onCompleteParams:[el, amt, name, delay],
           ease: Power1.easeInOut
         });
@@ -125,12 +167,18 @@ class GameContainer extends Component {
         collided ={this.collided}
         op = {ops[this.state.opIndex]}
         key={UUID()} 
-        time={now}/>, time:now}
+        time={now}/>, 
+        time:now,
+        op:ops[this.state.opIndex]
+        }
     }
 
+
     render() {
-        // style={{border: "1px solid #2196F3"}}
-        // console.log("render?", )
+        let checkAnswer;
+        console.log("useop",this.state.filledOp.length)
+        
+
         return (
             <div tabIndex="0" onKeyDown={this.handleMove} id="gameContainer">
                 <div>
@@ -143,7 +191,7 @@ class GameContainer extends Component {
                 </div>
 
                 <div className='questionContainer'  ref ="qContainer">
-                    <Question eq={this.state.question} ans={this.state.answer}/> 
+                    <Question eq={this.state.question} ans={this.state.answer} filled={this.state.filledOp}/> 
                 </div>
                 {this.props.fired.map(e => e.data)}
             </div>
@@ -161,10 +209,10 @@ function mapStateToProps(state){
 
 function mapDispathToProps(dispatch){
     return {
-        setBasePos: (type, data) => dispatch({type: type, payload:{data} }),
-        moveBasePos: (type, data) => dispatch({type: type, payload:{data} }),
-        setQPos: (type, data) => dispatch({type: type, payload:{data} }),
-        setFired: (type, data, time) => dispatch({type: type, payload:{data}, time}),
+        setBasePos: (type, data) => dispatch({type, payload:{data} }),
+        moveBasePos: (type, data) => dispatch({type, payload:{data} }),
+        setQPos: (type, data) => dispatch({type, payload:{data} }),
+        setFired: (type, data, time, op) => dispatch({type, payload:{data}, time, op}),
         updateFired: (type, data) => dispatch({type, payload:{data}}),
         clearBullet: (type, data) => dispatch({type, payload:{data}}),
         

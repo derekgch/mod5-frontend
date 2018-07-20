@@ -11,6 +11,14 @@ function randGen(digits, n=10) {
     return result -1
 }
 
+export function getDigits(n) {
+    let digits = 0;
+    if(typeof(n) === "number"){
+        digits = n.toString().length;
+    }
+    return digits;
+}
+
 
 export function simpleMath(digits=1, boxes=1) {
     let result =[];
@@ -42,5 +50,19 @@ export function hardWord(boxes) {
 
 export function calAnswer(array){
     return math.eval(array.join(" "))
+}
+
+export function swapOP(array, ops){
+    let result =[];
+    let copyOfOp = ops.slice(0)
+    
+    array.forEach(e => {
+        if(typeof(e) !=="number")
+            result.push(copyOfOp.shift())
+        else
+            result.push(e)
+    })
+
+    return result;
 }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import BlankBox from './BlankBox'
-
+import { getDigits } from './GenerateQuestions'
 import styled, { keyframes } from 'styled-components';
 
 const moveHorizontally = keyframes`
@@ -11,6 +11,12 @@ const moveHorizontally = keyframes`
     transform: translateX(1000px);
   }
 `;
+
+const textStyle = {
+    fontFamily: "COURIER",
+    fontSize: 120,
+    fill: '#fffff',
+  };
 
 class Question extends Component {
     constructor(props) {
@@ -27,40 +33,48 @@ class Question extends Component {
     //     return false;
     // }
 
-    render() {
-        const now = (new Date()).getTime();
-
-        const textStyle = {
-            fontFamily: "COURIER",
-            fontSize: 120,
-            fill: '#fffff',
-          };
-
-
-        //   const Move = styled.div`
+            //   const Move = styled.div`
         //   animation: ${moveHorizontally} 30s linear;
         //   position: absolute;
         //   top: 10vw;          
         //   left: 0vw;
         // `;
-        let eq = [3, "+", 1, "-", 1].slice(0);
+
+    render() {
+        const now = (new Date()).getTime();
+
+        console.log("eq and ans", this.props.eq, this.props.ans)
+
+        let eq = [3, "+", 1, "-", 1];
+        let toRender = null;
+        let i = 0;
+        let digits = 0;
+        let filled = [];
+
         if(this.props.eq){eq = this.props.eq.slice(0);}
         // const ans = 5;
-        const width = 110* eq.length;
         eq.push("=");
         eq.push(this.props.ans)
-        let toRender = null;
+
+        if(this.props.filled.length>0) filled = this.props.filled.slice(0);
 
         if(eq.length > 0){
-            let i = 0;
             toRender= eq.map(el => {
                 i++;
-                if(typeof(el) === "number" || el === "=")
+                if(typeof(el) === "number" || el === "="){
+                    if(el !== "=")digits += (getDigits(el)-1)
                     return <text x={i*60 - 30} y="95" {...textStyle} key={now-i} >{el}</text>
-                else
-                    return <BlankBox key={now-i} start={i*60 - 15}/>
+                }else{
+                    if(filled.length >0){
+                        return <text x={i*60 - 30} y="95" {...textStyle} key={now-i} >{filled.shift()}</text>
+                        
+                    }else
+                        return <BlankBox key={now-i} start={i*60 - 15}/>
+                }
             })
         }
+        console.log(filled)
+        const width = 67* (eq.length+digits);
         return (
 
             <svg width={width}>                
