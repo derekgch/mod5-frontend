@@ -39,45 +39,53 @@ class Question extends Component {
         //   top: 10vw;          
         //   left: 0vw;
         // `;
+    totalWidth(eq){
+        let result =0;
+        eq.forEach(el => {
+            result+=  typeof(el) === "number" ? getDigits(el)*65 : 65
+        });
+        return result;
+    }
 
-    render() {
+    questionToRender=(eq, filled)=>{
         const now = (new Date()).getTime();
-
         console.log("eq and ans", this.props.eq, this.props.ans)
 
-        let eq = [3, "+", 1, "-", 1];
-        let toRender = null;
         let i = 0;
-        let digits = 0;
+        let endPoint =0;
+        let startPoint =0;
+        return  eq.map(el => {
+            i++;
+            startPoint =endPoint;
+            if(typeof(el) === "number"){
+                endPoint = getDigits(el)*63 +startPoint;
+            }else {
+                endPoint = startPoint+ 63;
+            }
+            if(typeof(el) === "number" || el === "="){
+                return <text x={startPoint} y="95" {...textStyle} key={now-i} >{el}</text>
+            }else{
+                if(filled.length >0){
+                    return <text x={startPoint} y="95" {...textStyle} key={now-i} >{filled.shift()}</text>                    
+                }else
+                    return <BlankBox key={now-i} start={startPoint+15}/>
+            }
+        })        
+    }
+
+    render() {
+        let eq = [3, "+", 1, "-", 1];
         let filled = [];
 
         if(this.props.eq){eq = this.props.eq.slice(0);}
-        // const ans = 5;
+        if(this.props.filled.length>0) filled = this.props.filled.slice(0);
         eq.push("=");
         eq.push(this.props.ans)
 
-        if(this.props.filled.length>0) filled = this.props.filled.slice(0);
-
-        if(eq.length > 0){
-            toRender= eq.map(el => {
-                i++;
-                if(typeof(el) === "number" || el === "="){
-                    if(el !== "=")digits += (getDigits(el)-1)
-                    return <text x={i*60 - 30} y="95" {...textStyle} key={now-i} >{el}</text>
-                }else{
-                    if(filled.length >0){
-                        return <text x={i*60 - 30} y="95" {...textStyle} key={now-i} >{filled.shift()}</text>
-                        
-                    }else
-                        return <BlankBox key={now-i} start={i*60 - 15}/>
-                }
-            })
-        }
-        console.log(filled)
-        const width = 67* (eq.length+digits);
+        const toRender = this.questionToRender(eq, filled);
+        const width = this.totalWidth(eq)
         return (
-
-            <svg width={width}>                
+            <svg width={width} viewBox={`0 0 ${width} 130`} >                
                 <g>
                     {toRender}                  
                 </g>

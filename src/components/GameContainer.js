@@ -6,6 +6,7 @@ import Bullet from './Bullet'
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite} from "gsap/TweenMax";
 import { simpleMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
+import { stat } from 'fs';
 
 
 class GameContainer extends Component {
@@ -14,7 +15,6 @@ class GameContainer extends Component {
         question: null,
         answer: null,
         filledOp: [],
-        box:2,
         userEq:[],
     }
 
@@ -22,11 +22,16 @@ class GameContainer extends Component {
         this.genNewEq();
         let qCnt = this.refs.qContainer;
         this.flyRight(qCnt, 15, "qContainer", 0.1);
-        
+        document.addEventListener("keydown", this.handleMove)
     }
 
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleMove);
+    }
+
+
     genNewEq=()=>{
-        let eq = simpleMath(1,this.state.box);
+        let eq = simpleMath(this.props.digits,this.props.box);
         let ans = calAnswer(eq);
         this.setState({question:eq, answer:ans, filledOp:[]})
     }
@@ -52,21 +57,7 @@ class GameContainer extends Component {
         }
     }
 
-   shouldComponentUpdate(nextProps, nextState){
-   
-    // if(this.state.filledOp.length >= this.state.box && this.state.eq.length > 0){
-    //     let userEq = swapOP(this.state.eq, this.state.filledOp) 
-    //     if(calAnswer(userEq) !== this.state.answer){
-    //         this.setState({filledOp:[]})
-    //     }else{
-    //         this.genNewEq();
-    //     }
-    //     return true;
-    // }else{
-    //     return false;
-    // }
-    return true;
-   }
+
 
 
    cycleOp=(keyup, level=0) => {
@@ -85,7 +76,7 @@ class GameContainer extends Component {
 
 
     handleMove=(event) => {
-
+        console.log(event)
         const now = (new Date()).getTime();
         let active = this.props.fired
         if(this.props.fired.length > 0){
@@ -180,7 +171,7 @@ class GameContainer extends Component {
         
 
         return (
-            <div tabIndex="0" onKeyDown={this.handleMove} id="gameContainer">
+            <div  id="gameContainer">
                 <div>
                     <svg height="600" width="1000" >
         
@@ -203,7 +194,9 @@ function mapStateToProps(state){
     return {
         basePos: state.basePos,
         fired: state.fired,
-        lastFired: state.lastFired
+        lastFired: state.lastFired,
+        digits: state.digits,
+        box: state.box
     }
 }
 
