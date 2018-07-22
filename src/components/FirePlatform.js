@@ -7,6 +7,7 @@ const textStyle = {
   };
 
 class FirePlatform extends Component {
+
     translatePosition = (pX, pY) => {
         let size = 100;
         let angle = 30/180*Math.PI
@@ -21,10 +22,14 @@ class FirePlatform extends Component {
         console.log(testPath)
 
         return (
-            <React.Fragment >
+            
+            <svg width="110" height="110">
+            <g>
                 <path d={testPath}  fill="#FF8A65" stroke="#95a5a6" strokeWidth="5" />
                 <text x={this.props.x-25} y={this.props.y+80} {...textStyle}>{this.props.op}</text>
-            </React.Fragment>
+            </g>
+            </svg>
+            
         );
     }
 }

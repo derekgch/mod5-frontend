@@ -4,9 +4,8 @@ import FirePlatform from './FirePlatform'
 import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import UUID from 'uuid'
-import {TweenMax, Power1, TimelineLite} from "gsap/TweenMax";
+import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
 import { simpleMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
-import { stat } from 'fs';
 
 
 class GameContainer extends Component {
@@ -22,16 +21,23 @@ class GameContainer extends Component {
         this.genNewEq();
         let qCnt = this.refs.qContainer;
         this.flyRight(qCnt, 15, "qContainer", 0.1);
-        document.addEventListener("keydown", this.handleMove)
+        this.togglePos(true, true)
+        this.setBasePosFn();
+        document.addEventListener("keydown", this.handleKeyEvent)
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.handleMove);
+        document.removeEventListener('keydown', this.handleKeyEvent);
+    }
+
+    setBasePosFn=()=>{
+        
+        this.props.setBasePos('SET_BASE_POS', this.firePlatform.getClientRects()[0].x)
     }
 
 
     genNewEq=()=>{
-        let eq = simpleMath(this.props.digits,this.props.box);
+        let eq = simpleMath(this.props.digits, this.props.box);
         let ans = calAnswer(eq);
         this.setState({question:eq, answer:ans, filledOp:[]})
     }
@@ -47,7 +53,7 @@ class GameContainer extends Component {
    }
 
    checkAnswer=() => {
-      if(this.state.filledOp.length >= this.state.box && this.state.question.length > 0){
+      if(this.state.filledOp.length >= this.props.box && this.state.question.length > 0){
         let userEq = swapOP(this.state.question, this.state.filledOp) 
             if(calAnswer(userEq) !== this.state.answer){
                 this.setState({filledOp:[]})
@@ -56,8 +62,6 @@ class GameContainer extends Component {
             }
         }
     }
-
-
 
 
    cycleOp=(keyup, level=0) => {
@@ -74,9 +78,27 @@ class GameContainer extends Component {
         this.setState({opIndex:index})
    }
 
+   togglePos=(left, start)=>{
+        let amt = 200,
+            pos = this.props.basePos;
+        if(left) pos -= amt;
+        else pos += amt;
+        if(pos> window.innerWidth-100) pos = window.innerWidth-100;
+        if(pos < 0) pos =0;
+        if(start) pos = window.innerWidth/2 -50 ;
+        TweenLite.to(this.firePlatform, 2, {
+        x: pos,
+        onUpdate: this.setBasePosFn,
+        repeat: -1,
+        ease: Sine
+      })
+    //   this.props.moveBasePos("MOVE_EVENT",{left, value:10}) 
+              
+   }
 
-    handleMove=(event) => {
-        console.log(event)
+   
+
+    handleKeyEvent=(event) => {
         const now = (new Date()).getTime();
         let active = this.props.fired
         if(this.props.fired.length > 0){
@@ -88,13 +110,14 @@ class GameContainer extends Component {
             case 'ArrowLeft':
                 event.preventDefault();
                 console.log("move left")
-                this.props.moveBasePos("MOVE_EVENT",{left:true, value:10})
+                this.togglePos(true)
                 break;
 
             case 'ArrowRight':
                 event.preventDefault();
                 console.log("move right")
-                this.props.moveBasePos("MOVE_EVENT",{left:false, value:10})
+                this.togglePos(false)
+                
                 break;
 
             case 'ArrowDown':
@@ -123,7 +146,7 @@ class GameContainer extends Component {
     flyRight =(el, amt, name, delay)=> {
         TweenMax.fromTo(el, amt, {
           y:100, 
-          x: 0
+          x: -300
         }, {
           x: window.innerWidth-300,
           y:100,
@@ -140,7 +163,7 @@ class GameContainer extends Component {
           y:100, 
           x: window.innerWidth-300
         }, {
-          x: 0,
+          x: -300,
           y:100,
           rotation: 0,
           delay: delay, 
@@ -166,20 +189,18 @@ class GameContainer extends Component {
 
 
     render() {
-        let checkAnswer;
-        console.log("useop",this.state.filledOp.length)
         
-
         return (
-            <div  id="gameContainer">
-                <div>
-                    <svg height="600" width="1000" >
-        
-                    <FirePlatform x={this.props.basePos} y={500}  
+            <div  id="gameContainer">       
+                    <div  className= "fpContainer" ref={c => this.firePlatform = c}>
+                    <FirePlatform x={55} y={10}  
                                 op = {ops[this.state.opIndex]}
+                                key= "fireplatform__XD1"
+                                setBasePos ={this.props.setBasePos}
+                                togglePos={this.togglePos}
                     />
-                    </svg>
-                </div>
+                    </div>
+                
 
                 <div className='questionContainer'  ref ="qContainer">
                     <Question eq={this.state.question} ans={this.state.answer} filled={this.state.filledOp}/> 
@@ -203,7 +224,6 @@ function mapStateToProps(state){
 function mapDispathToProps(dispatch){
     return {
         setBasePos: (type, data) => dispatch({type, payload:{data} }),
-        moveBasePos: (type, data) => dispatch({type, payload:{data} }),
         setQPos: (type, data) => dispatch({type, payload:{data} }),
         setFired: (type, data, time, op) => dispatch({type, payload:{data}, time, op}),
         updateFired: (type, data) => dispatch({type, payload:{data}}),

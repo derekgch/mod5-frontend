@@ -3,15 +3,6 @@ import styled, { keyframes } from 'styled-components';
 import {TweenMax, Power1, TimelineLite} from "gsap/TweenMax";
 
 
-const moveVertically = keyframes`
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-3000px);
-  }
-`;
-
 const textStyle = {
     fontFamily: "COURIER",
     fontSize: 100,
@@ -46,8 +37,6 @@ class Bullet extends React.Component {
     }
 
     collisionDetetion(rect1, rect2){
-        // console.log("QQQ", rect1)
-        // console.log("BBB", rect2)
             
         if( rect2.x+35 > rect1.x && rect2.x+35 < rect1.x+rect1.width
             && rect2.y+35 > rect1.y && rect2.y+35 < rect1.y+150
@@ -79,12 +68,6 @@ class Bullet extends React.Component {
 
     render() {
 
-    //     const Move = styled.div`
-    //     animation: ${moveVertically} 30s linear;
-    //     position: absolute;
-    //     bottom: 10vw;
-    //     left: ${this.props.startAt}px;
-    //   `;
         return (
                 <div className={`bullet ${this.props.time}`} ref="bullet">
                     <svg width="70" height="70">

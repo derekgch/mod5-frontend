@@ -38,3 +38,8 @@
   top: 0vw;
 
 }
+
+.fpContainer{
+  position: absolute;  
+  bottom: 5vw;
+}

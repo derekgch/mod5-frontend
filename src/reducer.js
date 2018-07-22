@@ -38,18 +38,15 @@ function reducer (state = initialState, action) {
                 return { ...state, currentUserId: null, currentUserName: null}
             
             case "SET_BASE_POS":
+                    
                 return {...state, basePos: action.payload.data}
-            case "MOVE_EVENT":
-                    let pos = state.basePos - action.payload.data.value
-                    if(!action.payload.data.left)
-                        {pos = state.basePos + action.payload.data.value}
-                return {...state, basePos: pos }
-          case "FIRE_EVENT":
 
-            return { ...state, fired: action.payload.data, lastFired: action.time }
+            case "FIRE_EVENT":
 
-          case 'UPDATE_FIRE':
-            return {...state, fired: action.payload.data}
+                return { ...state, fired: action.payload.data, lastFired: action.time }
+
+            case 'UPDATE_FIRE':
+                return {...state, fired: action.payload.data}
         //   case "SET_COUNTER":
         //     return { ...state, counter: action.payload.value }
             default:
