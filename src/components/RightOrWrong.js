@@ -67,9 +67,9 @@ class RightOrWrong extends Component {
         const toDisplay = this.props.right ? this.right() : this.wrong();
         return (
             <div className="wrContainer" ref={c => this.container = c}>
-            <svg width="400" >
-                {toDisplay}
-            </svg>
+                <svg width="400" >
+                    {toDisplay}
+                </svg>
             </div>
         );
     }

@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import Instruction from './instruction'
 import DisplayRW from './RightOrWrong'
+
+
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
 import { simpleMath, multiplyMath, hardMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
@@ -238,7 +240,7 @@ class GameContainer extends Component {
 
 
     render() {
-        const displayUsereq = this.state.checkingAns ? this.showUserAns() : null;
+        const displayUserEq = this.state.checkingAns ? this.showUserAns() : null;
         return (
             <div  id="gameContainer">       
                     <div  className= "fpContainer" ref={c => this.firePlatform = c}>
@@ -259,11 +261,9 @@ class GameContainer extends Component {
                 </div>
                 {this.props.fired.map(e => e.data)}
 
-                {displayUsereq}
+                {displayUserEq}
                 <Instruction />
             
-
-
             </div>
         );
     }
@@ -286,8 +286,7 @@ function mapDispathToProps(dispatch){
         setQPos: (type, data) => dispatch({type, payload:{data} }),
         setFired: (type, data, time, op) => dispatch({type, payload:{data}, time, op}),
         updateFired: (type, data) => dispatch({type, payload:{data}}),
-        clearBullet: (type, data) => dispatch({type, payload:{data}}),
-        
+        clearBullet: (type, data) => dispatch({type, payload:{data}}),        
     }
 }
 

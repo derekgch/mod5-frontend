@@ -47,6 +47,10 @@ class InputAdornments extends React.Component {
     showPassword: false,
   };
 
+  componentWillUnmount(){
+    this.resetState();
+  }
+
   handleChange = prop => event => {
     this.setState({ [prop]: event.target.value });
   };
@@ -54,6 +58,16 @@ class InputAdornments extends React.Component {
   handleMouseDownPassword = event => {
     event.preventDefault();
   };
+
+  resetState=()=>{
+    this.setState({
+      user_name: '',
+      password: '',
+      password_confirmation: '',
+      first_name: '',
+      last_name: '',
+      email: ''})
+  }
 
   handleClickShowPassword = () => {
     this.setState(state => ({ showPassword: !state.showPassword }));
@@ -65,15 +79,11 @@ class InputAdornments extends React.Component {
     .then(data => {
         localStorage.setItem("token", data.token);
         this.props.loggedIn(data);
-        this.setState({
-        user_name: '',
-        password: '',
-        password_confirmation: '',
-        first_name: '',
-        last_name: '',
-        email: ''})
     })
-    .catch(() => alert("wrong username or password"))
+    .catch(() => {
+      alert("wrong username or password")
+      this.resetState();
+    })
   }
 
   handleClickSignup = () => {
