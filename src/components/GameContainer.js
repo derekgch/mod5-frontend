@@ -3,6 +3,7 @@ import Question from './Question'
 import FirePlatform from './FirePlatform'
 import { connect } from 'react-redux'
 import Bullet from './Bullet'
+import Instruction from './instruction'
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
 import { simpleMath, multiplyMath, hardMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
@@ -223,7 +224,6 @@ class GameContainer extends Component {
                     />
                     </div>
                 
-
                 <div className='questionContainer'  ref ="qContainer">
                     <Question eq={this.state.question} 
                     ans={this.state.answer} 
@@ -232,6 +232,8 @@ class GameContainer extends Component {
                     /> 
                 </div>
                 {this.props.fired.map(e => e.data)}
+
+                <Instruction />
             </div>
         );
     }
