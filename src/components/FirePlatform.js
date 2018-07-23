@@ -26,7 +26,7 @@ class FirePlatform extends Component {
             <svg width="110" height="110">
             <g>
                 <path d={testPath}  fill="#FF8A65" stroke="#95a5a6" strokeWidth="5" />
-                <text x={this.props.x-25} y={this.props.y+80} {...textStyle}>{operator}</text>
+                <text x={this.props.x-23} y={this.props.y+80} {...textStyle}>{operator}</text>
             </g>
             </svg>
             
