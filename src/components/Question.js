@@ -1,16 +1,7 @@
 import React, { Component } from 'react';
 import BlankBox from './BlankBox'
 import { getDigits } from './GenerateQuestions'
-import styled, { keyframes } from 'styled-components';
 
-const moveHorizontally = keyframes`
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(1000px);
-  }
-`;
 
 const textStyle = {
     fontFamily: "COURIER",
@@ -28,21 +19,17 @@ class Question extends Component {
     }
     
 
-    // shouldComponentUpdate(nextProps){
-    //     if(nextProps.hit) return true;
-    //     return false;
-    // }
+    shouldComponentUpdate(nextProps){
+        if(nextProps.filled.length !== this.props.filled.length 
+            || nextProps.op !== this.props.op
+            || nextProps.ans !== this.props.ans ) return true;
+        return false;
+    }
 
-            //   const Move = styled.div`
-        //   animation: ${moveHorizontally} 30s linear;
-        //   position: absolute;
-        //   top: 10vw;          
-        //   left: 0vw;
-        // `;
     totalWidth(eq){
         let result =0;
         eq.forEach(el => {
-            result+=  typeof(el) === "number" ? getDigits(el)*65 : 65
+            result+=  typeof(el) === "number" ? getDigits(el)*66 : 65
         });
         return result;
     }
@@ -66,7 +53,9 @@ class Question extends Component {
                 return <text x={startPoint} y="95" {...textStyle} key={now-i} >{el}</text>
             }else{
                 if(filled.length >0){
-                    return <text x={startPoint} y="95" {...textStyle} key={now-i} >{filled.shift()}</text>                    
+                    let operator = filled.shift();
+                    if(operator === "/") operator ="÷"
+                    return <text x={startPoint} y="95" {...textStyle} key={now-i} >{operator}</text>                    
                 }else
                     return <BlankBox key={now-i} start={startPoint+15}/>
             }

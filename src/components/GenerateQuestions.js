@@ -35,8 +35,28 @@ export function simpleMath(digits=1, boxes=1) {
 
 
 
+export function multiplyMath(digits, boxes) {
+    let result =[];
+
+    while(boxes > 0){
+        result.push(randGen(digits));
+        result.push(ops[randGen(1, 4)-1]);
+        boxes--;
+    }    
+    result.push(randGen(digits));
+    return result;
+}
+
 export function hardMath(digits, boxes) {
-    
+    let result =[];
+
+    while(boxes > 0){
+        result.push(randGen(digits));
+        result.push(ops[randGen(1, 5)-1]);
+        boxes--;
+    }    
+    result.push(randGen(digits));
+    return result;
 }
 
 

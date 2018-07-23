@@ -67,7 +67,8 @@ class Bullet extends React.Component {
     
 
     render() {
-
+        let operator = this.props.op;
+        if(operator === "/") operator ="÷"
         return (
                 <div className={`bullet ${this.props.time}`} ref="bullet">
                     <svg width="70" height="70">
@@ -76,7 +77,7 @@ class Bullet extends React.Component {
                     x={this.props.position.x}
                     y={this.props.position.y}
                     >
-                    {this.props.op}
+                    {operator}
                     </text>
                     </svg>
                 </div>

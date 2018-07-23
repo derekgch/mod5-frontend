@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
-import { simpleMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
+import { simpleMath, multiplyMath, hardMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
 
 
 class GameContainer extends Component {
@@ -30,15 +30,25 @@ class GameContainer extends Component {
         document.removeEventListener('keydown', this.handleKeyEvent);
     }
 
-    setBasePosFn=()=>{
-        
-        this.props.setBasePos('SET_BASE_POS', this.firePlatform.getClientRects()[0].x)
+    setBasePosFn=()=>{    
+        this.props.setBasePos('SET_BASE_POS', this.firePlatform.getBoundingClientRect().x)
     }
 
 
     genNewEq=()=>{
-        let eq = simpleMath(this.props.digits, this.props.box);
-        let ans = calAnswer(eq);
+        let eq = [1, "+", 1];
+        let ans;
+        if(this.props.lvl === 0)
+            eq = simpleMath(this.props.digits, this.props.box);
+        if(this.props.lvl === 1 )
+            eq = multiplyMath(this.props.digits, this.props.box);
+        ans = calAnswer(eq);
+
+        if(this.props.lvl === 2){
+            eq = hardMath(this.props.digits, this.props.box);
+            ans = calAnswer(eq);
+            if(!Number.isInteger(ans)) ans = parseFloat( ans.toPrecision(4) );
+        }         
         this.setState({question:eq, answer:ans, filledOp:[]})
     }
 
@@ -53,9 +63,11 @@ class GameContainer extends Component {
    }
 
    checkAnswer=() => {
-      if(this.state.filledOp.length >= this.props.box && this.state.question.length > 0){
-        let userEq = swapOP(this.state.question, this.state.filledOp) 
-            if(calAnswer(userEq) !== this.state.answer){
+        if(this.state.filledOp.length >= this.props.box && this.state.question.length > 0){
+            let userEq = swapOP(this.state.question, this.state.filledOp) 
+            let userAns =calAnswer(userEq);
+            if(!Number.isInteger(userAns)) userAns = parseFloat (userAns.toPrecision(4));
+            if( userAns!== this.state.answer){
                 this.setState({filledOp:[]})
             }else{
                 this.genNewEq();
@@ -64,17 +76,28 @@ class GameContainer extends Component {
     }
 
 
-   cycleOp=(keyup, level=0) => {
+   cycleOp=(keyup, level=this.props.lvl) => {
     let index = this.state.opIndex;
         if(keyup){
             index++;
         }else{
             index --;
         }
+
         if(level === 0){ //only + and - operations
             if(index <0) index = 1
             index = index%2
-        }       
+        }
+
+        if(level === 1){ // only +, -, and * operations
+            if(index <0) index = 2
+            index = index%3
+        }      
+        
+        if(level === 2){ //  +, -, * and / operations
+            if(index <0) index = 3
+            index = index%4
+        } 
         this.setState({opIndex:index})
    }
 
@@ -92,13 +115,12 @@ class GameContainer extends Component {
         repeat: -1,
         ease: Sine
       })
-    //   this.props.moveBasePos("MOVE_EVENT",{left, value:10}) 
               
    }
 
-   
-
     handleKeyEvent=(event) => {
+        // console.log(this.firePlatform.getBoundingClientRect().x);
+        
         const now = (new Date()).getTime();
         let active = this.props.fired
         if(this.props.fired.length > 0){
@@ -203,7 +225,11 @@ class GameContainer extends Component {
                 
 
                 <div className='questionContainer'  ref ="qContainer">
-                    <Question eq={this.state.question} ans={this.state.answer} filled={this.state.filledOp}/> 
+                    <Question eq={this.state.question} 
+                    ans={this.state.answer} 
+                    filled={this.state.filledOp}
+                    
+                    /> 
                 </div>
                 {this.props.fired.map(e => e.data)}
             </div>
@@ -217,7 +243,8 @@ function mapStateToProps(state){
         fired: state.fired,
         lastFired: state.lastFired,
         digits: state.digits,
-        box: state.box
+        box: state.box,
+        lvl: state.lvl
     }
 }
 

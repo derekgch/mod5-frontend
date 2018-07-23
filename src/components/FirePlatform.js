@@ -19,14 +19,14 @@ class FirePlatform extends Component {
 
     render() {
         let testPath = this.translatePosition(this.props.x, this.props.y)
-        console.log(testPath)
-
+        let operator = this.props.op;
+        if(operator === "/") operator ="÷"
         return (
             
             <svg width="110" height="110">
             <g>
                 <path d={testPath}  fill="#FF8A65" stroke="#95a5a6" strokeWidth="5" />
-                <text x={this.props.x-25} y={this.props.y+80} {...textStyle}>{this.props.op}</text>
+                <text x={this.props.x-25} y={this.props.y+80} {...textStyle}>{operator}</text>
             </g>
             </svg>
             

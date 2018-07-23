@@ -9,15 +9,16 @@ const initialState = {
     basePos: 500,
     fired: [],
     lastFired: null,
-    digits: 1,
+    digits: 2,
     box: 2,
+    lvl: 2,
 }
 
 
 function reducer (state = initialState, action) {
 
-        console.log('state', state);
-        console.log('action', action);
+        // console.log('state', state);
+        // console.log('action', action);
 
     
         switch(action.type) {
