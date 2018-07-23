@@ -84,7 +84,7 @@ class GameContainer extends Component {
             setTimeout(() => {
             this.checkAnswer(userAns); 
             this.setState({checkingAns:false });               
-            }, 5000);
+            }, 4500);
         }
     }
 

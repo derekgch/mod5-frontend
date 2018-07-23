@@ -1,5 +1,4 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
 import {TweenMax, Power1, TimelineLite} from "gsap/TweenMax";
 
 
@@ -11,9 +10,7 @@ const textStyle = {
 
 
 class Bullet extends React.Component {
-    state={
-        op: "+"
-    }
+
     componentDidMount(){
         let bCnt = this.refs.bullet;
         this.flyUp(bCnt, 3, "bullet", 0.1);
@@ -50,12 +47,12 @@ class Bullet extends React.Component {
 
     flyUp = (el, amt, name, delay) => {
         TweenMax.fromTo(el, amt, {
-            y: 500, 
+            y: 0, 
             x: this.props.startAt,
 
           }, {
             x: this.props.startAt,
-            y:-400,
+            y:-1200,
             rotation: 0,
             delay: delay, 
             onComplete: this.clearIntervalFn,

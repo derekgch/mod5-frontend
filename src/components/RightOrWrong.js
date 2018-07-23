@@ -16,7 +16,7 @@ const textStyle = {
     stroke: 'green',
     strokeWidth:'3px',
   };
-const yPos = -300;
+const yPos = -window.innerHeight /2 ;
 
 class RightOrWrong extends Component {
 

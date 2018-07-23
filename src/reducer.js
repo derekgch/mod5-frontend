@@ -10,7 +10,7 @@ const initialState = {
     fired: [],
     lastFired: null,
     digits: 1,
-    box: 3,
+    box: 2,
     lvl: 1,
 }
 
