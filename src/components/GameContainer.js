@@ -4,6 +4,7 @@ import FirePlatform from './FirePlatform'
 import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import Instruction from './instruction'
+import DisplayRW from './RightOrWrong'
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
 import { simpleMath, multiplyMath, hardMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
@@ -16,6 +17,8 @@ class GameContainer extends Component {
         answer: null,
         filledOp: [],
         userEq:[],
+        userAns: null,
+        checkingAns: false
     }
 
     componentDidMount(){
@@ -57,23 +60,31 @@ class GameContainer extends Component {
 
    collided = (bulletTime) =>{
     let found = this.props.fired.find( e => e.time === bulletTime)
-    this.setState({filledOp: [...this.state.filledOp, found.op]}, this.checkAnswer)
+    this.setState({filledOp: [...this.state.filledOp, found.op]}, this.displayAnswer)
 
     let active = this.props.fired.filter( e => e.time !== bulletTime)
     this.props.updateFired("UPDATE_FIRE", active)
 
    }
 
-   checkAnswer=() => {
+   checkAnswer=(userAns) => {
+        if( userAns!== this.state.answer){
+            this.setState({filledOp:[], userEq: [], userAns:null })
+        }else{
+            this.genNewEq();
+        }
+    }
+
+    displayAnswer=() =>{
         if(this.state.filledOp.length >= this.props.box && this.state.question.length > 0){
             let userEq = swapOP(this.state.question, this.state.filledOp) 
             let userAns =calAnswer(userEq);
             if(!Number.isInteger(userAns)) userAns = parseFloat (userAns.toPrecision(4));
-            if( userAns!== this.state.answer){
-                this.setState({filledOp:[]})
-            }else{
-                this.genNewEq();
-            }
+            this.setState({checkingAns: true, userEq , userAns});
+            setTimeout(() => {
+            this.checkAnswer(userAns); 
+            this.setState({checkingAns:false });               
+            }, 5000);
         }
     }
 
@@ -211,9 +222,23 @@ class GameContainer extends Component {
         }
     }
 
+    showUserAns=()=>{
+       let { userEq, userAns, answer } = this.state;
+        return (
+            <div className='userEqContainer'>
+            <Question eq={userEq} 
+            ans={userAns} 
+            filled={this.state.filledOp}
+            
+            /> 
+            <DisplayRW right={userAns === answer}/>
+            </div>
+        )
+    }
+
 
     render() {
-        
+        const displayUsereq = this.state.checkingAns ? this.showUserAns() : null;
         return (
             <div  id="gameContainer">       
                     <div  className= "fpContainer" ref={c => this.firePlatform = c}>
@@ -234,7 +259,11 @@ class GameContainer extends Component {
                 </div>
                 {this.props.fired.map(e => e.data)}
 
+                {displayUsereq}
                 <Instruction />
+            
+
+
             </div>
         );
     }

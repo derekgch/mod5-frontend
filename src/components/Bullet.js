@@ -16,7 +16,7 @@ class Bullet extends React.Component {
     }
     componentDidMount(){
         let bCnt = this.refs.bullet;
-        this.flyUp(bCnt, 2, "bullet", 0.1);
+        this.flyUp(bCnt, 3, "bullet", 0.1);
         this.interval = setInterval(this.isHit, 100); 
     }
 
@@ -55,7 +55,7 @@ class Bullet extends React.Component {
 
           }, {
             x: this.props.startAt,
-            y:-100,
+            y:-400,
             rotation: 0,
             delay: delay, 
             onComplete: this.clearIntervalFn,

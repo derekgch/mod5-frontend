@@ -9,9 +9,9 @@ const initialState = {
     basePos: 500,
     fired: [],
     lastFired: null,
-    digits: 2,
-    box: 2,
-    lvl: 2,
+    digits: 1,
+    box: 3,
+    lvl: 1,
 }
 
 
@@ -28,7 +28,6 @@ function reducer (state = initialState, action) {
                 return {...state, selectedShow: found }
 
             case "CLICK_LOGIN_EVENT":
-                console.log(action.payload)
                 return { ...state, showLoginPage: action.payload }
 
             case "LOGIN_EVENT":
