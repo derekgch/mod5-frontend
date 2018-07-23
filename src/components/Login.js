@@ -115,7 +115,7 @@ class InputAdornments extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log(this.state);
+    // console.log(this.state);
     
     return (
         <div>

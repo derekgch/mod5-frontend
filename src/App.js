@@ -9,9 +9,16 @@ import {login, clickLogin, logout} from './actions'
 import { connect } from 'react-redux'
 
 class App extends Component {
+  componentDidMount(){
+    const token = localStorage.getItem("token");
+    if(!!token){
+      const data = atob(token.split(".")[1]);
+      this.props.loggedIn(data);
+      // console.log(data)
+    }
+  }
+
   render() {
-    console.log("RENDER!")
-    console.log(this.props.showLoginPage)
 
     return (
       <div className="App">

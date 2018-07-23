@@ -23,6 +23,19 @@ class Adapter {
         }
         return fetch(`${URL}users/`, config)
     }
+
+    static getUser(id, token){
+        let config ={
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/JSON',
+                'Authorization': token
+            },
+            
+        }
+        return fetch(`${URL}users/${id}`, config)
+    }
+
 }
 
 export default Adapter;

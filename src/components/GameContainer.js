@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import Instruction from './instruction'
 import DisplayRW from './RightOrWrong'
-
+import { setLevel } from '../actions'
 
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
@@ -41,6 +41,24 @@ class GameContainer extends Component {
             this.props.setBasePos('SET_BASE_POS', this.firePlatform.getBoundingClientRect().x)
     }
 
+    lvlUp=()=>{
+        let {digits, box, lvl} = this.props;
+        let data ={digits, box, lvl};
+        if(this.props.box < 3){
+            data.box++;
+            return data;
+        }else if(this.props.lvl < 2) {
+            data.lvl++;
+            data.box =1;
+            return data;
+        } else{
+            data.digits++;
+            data.box =1;
+            data.lvl =0;
+            return data;
+        }
+    }
+
 
     genNewEq=()=>{
         let eq = [1, "+", 1];
@@ -73,6 +91,9 @@ class GameContainer extends Component {
         if( userAns!== this.state.answer){
             this.setState({filledOp:[], userEq: [], userAns:null })
         }else{
+            let data = this.lvlUp();
+            // console.log(data)
+            this.props.setLevel(data);
             this.genNewEq();
         }
     }
@@ -286,7 +307,8 @@ function mapDispathToProps(dispatch){
         setQPos: (type, data) => dispatch({type, payload:{data} }),
         setFired: (type, data, time, op) => dispatch({type, payload:{data}, time, op}),
         updateFired: (type, data) => dispatch({type, payload:{data}}),
-        clearBullet: (type, data) => dispatch({type, payload:{data}}),        
+        clearBullet: (type, data) => dispatch({type, payload:{data}}),     
+        setLevel: (data) => dispatch(setLevel(data)),   
     }
 }
 

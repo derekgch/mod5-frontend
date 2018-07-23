@@ -5,6 +5,7 @@ export const LOGOUT_EVENT = 'LOGOUT_EVENT'
 export const SET_BASE_POS ='SET_BASE_POS'
 export const FIRE_EVENT='FIRE_EVENT'
 export const UPDATE_FIRE ='UPDATE_FIRE'
+export const SET_LEVEL_EVENT = "SET_LEVEL_EVENT"
 
 
 export function login(data) {
@@ -26,6 +27,14 @@ export function logout() {
         type: LOGOUT_EVENT,
     }
 }
+
+export function setLevel(data) {
+    return {
+        type: SET_LEVEL_EVENT,
+        payload: data
+    }
+}
+
 
 export function setBasePos(data) {
     return {

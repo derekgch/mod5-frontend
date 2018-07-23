@@ -10,8 +10,8 @@ const initialState = {
     fired: [],
     lastFired: null,
     digits: 1,
-    box: 2,
-    lvl: 1,
+    box: 1,
+    lvl: 0,
 }
 
 
@@ -22,25 +22,23 @@ function reducer (state = initialState, action) {
 
     
         switch(action.type) {
-            case "CLICK_EVENT":
-                const { data } = action.payload;
-                let found = state.shows.find( e => e.id === data)
-                return {...state, selectedShow: found }
+
+            case "SET_LEVEL_EVENT":
+                console.log("action", action.payload)
+                let {digits, box, lvl} = action.payload;
+                return {...state, digits, box , lvl }
 
             case "CLICK_LOGIN_EVENT":
-                console.log(action.payload);
                 
                 return { ...state, showLoginPage: action.payload }
 
             case "LOGIN_EVENT":
-            console.log(action.payload);
 
                 return { ...state, 
                     currentUserId: action.payload.id, 
                     currentUserName: action.payload.user_name,
                     showLoginPage: false }
             case "LOGOUT_EVENT":
-            console.log(action.payload);
 
                 return { ...state, currentUserId: null, currentUserName: null}
             
