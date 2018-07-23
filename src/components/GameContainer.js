@@ -31,8 +31,9 @@ class GameContainer extends Component {
         document.removeEventListener('keydown', this.handleKeyEvent);
     }
 
-    setBasePosFn=()=>{    
-        this.props.setBasePos('SET_BASE_POS', this.firePlatform.getBoundingClientRect().x)
+    setBasePosFn=()=>{
+        if(this.firePlatform)    
+            this.props.setBasePos('SET_BASE_POS', this.firePlatform.getBoundingClientRect().x)
     }
 
 

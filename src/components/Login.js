@@ -64,7 +64,7 @@ class InputAdornments extends React.Component {
     .then(this.handleFetchError)
     .then(data => {
         localStorage.setItem("token", data.token);
-        this.props.loggedIn("LOGIN_EVENT", data );
+        this.props.loggedIn(data);
         this.setState({
         user_name: '',
         password: '',

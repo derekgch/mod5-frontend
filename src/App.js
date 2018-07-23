@@ -3,6 +3,7 @@ import './App.css';
 import NavBar from './components/NavBar'
 import Login from './components/Login'
 import GameContainer from './components/GameContainer'
+import {login, clickLogin, logout} from './actions'
 
 
 import { connect } from 'react-redux'
@@ -16,7 +17,7 @@ class App extends Component {
       <div className="App">
         <NavBar currentUserId={this.props.currentUserId}
         logOut={this.handleLogout}
-        onClick={() => this.props.showLogin("CLICK_LOGIN_EVENT",!this.props.showLoginPage)}/>
+        onClick={() => this.props.showLogin(!this.props.showLoginPage)}/>
         {this.props.showLoginPage ? 
         <Login loggedIn={this.props.loggedIn}/> : 
         <GameContainer />}
@@ -24,9 +25,9 @@ class App extends Component {
       </div>
     );
   }
-  
+
   handleLogout=()=>{
-    this.props.logOut("LOGOUT_EVENT");
+    this.props.logOut();
     localStorage.removeItem("token");
   }
 
@@ -44,9 +45,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    showLogin: (type, data)=> dispatch({type: type, payload:{data: data} }),
-    loggedIn:(type, data) => dispatch({type: type, payload:{data: data}}),
-    logOut:(type) => dispatch({type: type}),
+    showLogin: (data)=> dispatch(clickLogin(data)),
+    loggedIn:(data) => dispatch(login(data)),
+    logOut:() => dispatch(logout()),
   }
 }
 

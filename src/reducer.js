@@ -28,12 +28,13 @@ function reducer (state = initialState, action) {
                 return {...state, selectedShow: found }
 
             case "CLICK_LOGIN_EVENT":
-                return { ...state, showLoginPage: action.payload.data }
+                console.log(action.payload)
+                return { ...state, showLoginPage: action.payload }
 
             case "LOGIN_EVENT":
                 return { ...state, 
-                    currentUserId: action.payload.data.id, 
-                    currentUserName: action.payload.data.user_name,
+                    currentUserId: action.payload.id, 
+                    currentUserName: action.payload.user_name,
                     showLoginPage: false }
             case "LOGOUT_EVENT":
                 return { ...state, currentUserId: null, currentUserName: null}
