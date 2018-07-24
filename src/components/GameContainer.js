@@ -7,6 +7,8 @@ import Instruction from './instruction'
 import DisplayRW from './RightOrWrong'
 import { setLevel } from '../actions';
 import HpBar from './HpBar';
+import Score from './Scores';
+import Adapter from '../Adapter'
 
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
@@ -27,7 +29,7 @@ class GameContainer extends Component {
     }
 
     componentDidMount(){
-        this.genNewEq();
+        this.genNewEq(this.props);
         let qCnt = this.refs.qContainer;
         this.flyRight(qCnt, 15, "qContainer", 0.1);
         this.togglePos(true, true)
@@ -44,9 +46,17 @@ class GameContainer extends Component {
             this.props.setBasePos('SET_BASE_POS', this.firePlatform.getBoundingClientRect().x)
     }
 
-    lvlUp=()=>{
+    lvlUp=( up= true)=>{
         let {digits, box, lvl} = this.props;
         let data ={digits, box, lvl};
+
+        if(!up){
+            data.digits = 1;
+            data.box = 1;
+            data.lvl =0;
+            return data;
+        }
+
         if(this.props.box < 3){
             data.box++;
             return data;
@@ -63,17 +73,18 @@ class GameContainer extends Component {
     }
 
 
-    genNewEq=()=>{
+    genNewEq=({box, lvl, digits})=>{
         let eq = [1, "+", 1];
         let ans;
-        if(this.props.lvl === 0)
-            eq = simpleMath(this.props.digits, this.props.box);
-        if(this.props.lvl === 1 )
-            eq = multiplyMath(this.props.digits, this.props.box);
+        console.log("this.props.box", box)
+        if(lvl === 0)
+            eq = simpleMath(digits, box);
+        if(lvl === 1 )
+            eq = multiplyMath(digits, box);
         ans = calAnswer(eq);
 
-        if(this.props.lvl === 2){
-            eq = hardMath(this.props.digits, this.props.box);
+        if(lvl === 2){
+            eq = hardMath(digits, box);
             ans = calAnswer(eq);
             if(!Number.isInteger(ans)) ans = parseFloat( ans.toPrecision(4) );
         }         
@@ -92,15 +103,20 @@ class GameContainer extends Component {
    }
 
    checkAnswer=(userAns) => {
-       console.log("checking ans", userAns)
+       console.log("checking ans", userAns, this.state.filledOp, this.state.question)
         if( userAns!== this.state.answer){
-            if(this.state.hp < 1) {alert("GAME OVER!")}            
-            this.setState({filledOp:[], userEq: [], userAns:null, hp: this.state.hp -20 })
+            this.setState({filledOp:[], userEq: [], userAns:null, hp: this.state.hp -20 }, ()=>{
+                if(this.state.hp < 1) {
+                    alert("GAME OVER!");
+                    this.gameOver()
+                }            
+            })
         }else{
             let data = this.lvlUp();
             this.props.setLevel(data);
-            this.genNewEq();
-            this.setState({score: this.state.score +20, hp: this.state.hp + 5})
+            this.setState({score: this.state.score +10, hp: this.state.hp + 5})
+            this.genNewEq(data);
+
         }
     }
 
@@ -113,11 +129,26 @@ class GameContainer extends Component {
                 console.log("user checking")
                 this.setState({checkingAns: true, userEq , userAns},()=>{
                     setTimeout(() => {                        
-                        this.setState({checkingAns:false, filledOp:[] }, ()=> this.checkAnswer(userAns));               
+                        this.setState({checkingAns:false }, ()=> this.checkAnswer(userAns));               
                         }, 4500);
                 });
             }        
         }
+    }
+
+    resetGame = () => {
+        let data = this.lvlUp(false)
+        this.setState({
+            hp:100,
+            score: 0,
+        })
+        this.genNewEq(data);
+        this.props.setLevel(data);
+    }
+
+    gameOver=()=>{
+        Adapter.postGame(this.props.userId, this.state.score)
+        this.resetGame();
     }
 
 
@@ -159,12 +190,10 @@ class GameContainer extends Component {
         onUpdate: this.setBasePosFn,
         repeat: -1,
         ease: Sine
-      })
-              
+      })              
    }
 
     handleKeyEvent=(event) => {
-        // console.log(this.firePlatform.getBoundingClientRect().x);
         
         const now = (new Date()).getTime();
         let active = this.props.fired
@@ -176,29 +205,24 @@ class GameContainer extends Component {
         switch (event.key) {
             case 'ArrowLeft':
                 event.preventDefault();
-                console.log("move left")
                 this.togglePos(true)
                 break;
 
             case 'ArrowRight':
                 event.preventDefault();
-                console.log("move right")
                 this.togglePos(false)
                 
                 break;
 
             case 'ArrowDown':
-                console.log("move down")
                 this.cycleOp(false)
                 break;
 
             case 'ArrowUp':
-                console.log("move up")
                 this.cycleOp(true)
                 break;
 
             case ' ':
-                console.log("space")
                 if((now-this.props.lastFired) > 500){
                     this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
                 }
@@ -294,6 +318,7 @@ class GameContainer extends Component {
                 {displayUserEq}
                 <Instruction />
                 <HpBar   completed={this.state.hp}/>
+                <Score score={this.state.score}/>
             </div>
         );
     }
@@ -306,7 +331,8 @@ function mapStateToProps(state){
         lastFired: state.lastFired,
         digits: state.digits,
         box: state.box,
-        lvl: state.lvl
+        lvl: state.lvl,
+        userId: state.currentUserId,
     }
 }
 

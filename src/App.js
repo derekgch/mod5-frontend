@@ -4,7 +4,7 @@ import NavBar from './components/NavBar'
 import Login from './components/Login'
 import GameContainer from './components/GameContainer'
 import {login, clickLogin, logout} from './actions'
-
+import Adapter from './Adapter'
 
 import { connect } from 'react-redux'
 
@@ -19,6 +19,7 @@ class App extends Component {
   }
 
   render() {
+    Adapter.seedWords();
 
     return (
       <div className="App">

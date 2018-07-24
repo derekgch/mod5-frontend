@@ -1,4 +1,5 @@
 const URL="http://localhost:4000/"
+const WordUrl = "http://localhost:4000/api/v1/words"
 
 class Adapter {
 
@@ -34,6 +35,21 @@ class Adapter {
             
         }
         return fetch(`${URL}users/${id}`, config)
+    }
+
+
+    static postGame(id, points){
+        let config ={
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/JSON'
+            },
+            body: JSON.stringify({
+                user_id: id,
+                points: points
+            })
+        }
+        return fetch(`${URL}games/`, config)
     }
 
 }
