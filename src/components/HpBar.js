@@ -15,36 +15,49 @@ class LinearBuffer extends React.Component {
       super(props);
       this.state = {
         completed: props.completed,
-        buffer: props.diff,
+        buffer: props.completed,
       };
   }
   
- 
-
-
     componentDidUpdate(prevProps, prevState,){
         if(prevProps.completed !== this.props.completed){
-            this.progress(this.props.completed, prevProps.completed)
-            
+            this.progress(this.props.completed, prevProps.completed)            
         }
     }
-    shouldComponentUpdate(){
-        return true;
+    shouldComponentUpdate(nextProps, nextState){
+      if(nextProps.completed !== this.props.completed
+        || nextState.completed !== this.state.completed
+        || nextState.buffer !== this.state.buffer)
+          return true;
+      return false;
     }
 
 
   progress = (completed, prevCompleted) => {
-    if (completed > 100) {
-      this.setState({ completed: 100, buffer: 10 });
+    if(completed > 100) completed =100;
+
+    if(completed >  prevCompleted){
+      this.incHP(completed);
     } else {
-      this.setState({ completed: completed, buffer: prevCompleted });
+      this.decHP(completed, prevCompleted);
     }
 
+  };
+
+  decHP=(completed, prevCompleted)=>{
+    this.setState({ completed, buffer: prevCompleted });
     setTimeout(() => {
-        this.setState({buffer: completed})
+      this.setState({buffer: completed})
+    }, 1000);
+  }
+
+  incHP=(completed) =>{
+    this.setState({buffer: completed})
+    setTimeout(() => {
+      this.setState({completed})
     }, 1000);
 
-  };
+  }
 
   render() {
     const { classes } = this.props;

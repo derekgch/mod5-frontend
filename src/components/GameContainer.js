@@ -22,7 +22,8 @@ class GameContainer extends Component {
         userEq:[],
         userAns: null,
         checkingAns: false,
-        hp:100
+        hp:100,
+        score: 0,
     }
 
     componentDidMount(){
@@ -81,25 +82,25 @@ class GameContainer extends Component {
 
 
    collided = (bulletTime) =>{
-    let found = this.props.fired.find( e => e.time === bulletTime)
-    this.setState({filledOp: [...this.state.filledOp, found.op]}, this.displayAnswer)
+       if(!this.state.checkingAns){
+        let found = this.props.fired.find( e => e.time === bulletTime)
+        this.setState({filledOp: [...this.state.filledOp, found.op]}, this.displayAnswer)
 
-    let active = this.props.fired.filter( e => e.time !== bulletTime)
-    this.props.updateFired("UPDATE_FIRE", active)
-
+        let active = this.props.fired.filter( e => e.time !== bulletTime)
+        this.props.updateFired("UPDATE_FIRE", active)
+       }
    }
 
    checkAnswer=(userAns) => {
+       console.log("checking ans", userAns)
         if( userAns!== this.state.answer){
-            if(this.state.hp < 1) {alert("GAME OVER!")}
-            console.log(this.state.hp);
-            
+            if(this.state.hp < 1) {alert("GAME OVER!")}            
             this.setState({filledOp:[], userEq: [], userAns:null, hp: this.state.hp -20 })
         }else{
             let data = this.lvlUp();
-            // console.log(data)
             this.props.setLevel(data);
             this.genNewEq();
+            this.setState({score: this.state.score +20, hp: this.state.hp + 5})
         }
     }
 
@@ -108,11 +109,14 @@ class GameContainer extends Component {
             let userEq = swapOP(this.state.question, this.state.filledOp) 
             let userAns =calAnswer(userEq);
             if(!Number.isInteger(userAns)) userAns = parseFloat (userAns.toPrecision(4));
-            this.setState({checkingAns: true, userEq , userAns});
-            setTimeout(() => {
-            this.checkAnswer(userAns); 
-            this.setState({checkingAns:false });               
-            }, 4500);
+            if(userEq.length > 0){
+                console.log("user checking")
+                this.setState({checkingAns: true, userEq , userAns},()=>{
+                    setTimeout(() => {                        
+                        this.setState({checkingAns:false, filledOp:[] }, ()=> this.checkAnswer(userAns));               
+                        }, 4500);
+                });
+            }        
         }
     }
 

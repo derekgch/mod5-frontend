@@ -8,6 +8,9 @@ const textStyle = {
   };
 
 class instruction extends Component {
+    shouldComponentUpdate(){
+        return false;
+    }
     render() {
         const textToDisplay = "<- -> : move   up down: cycle through operations  space: fire"
         return (

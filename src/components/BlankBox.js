@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 
 class BlankBox extends Component {
-    
+    shouldComponentUpdate(){
+        return false;
+    }
+
+
     render() {
         return (
             <React.Fragment>

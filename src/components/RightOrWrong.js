@@ -21,7 +21,7 @@ const yPos = -window.innerHeight /2 ;
 class RightOrWrong extends Component {
 
     componentDidMount(){
-        console.log(this.container);
+        // console.log(this.container);
         
         TweenLite.fromTo(this.container, 2, 
             {x: 0,

@@ -8,6 +8,13 @@ const textStyle = {
 
 class FirePlatform extends Component {
 
+    shouldComponentUpdate(nextProps, nextState){
+        if(nextProps.op !== this.props.op){
+            return true;
+        }
+        return false;
+    }
+
     translatePosition = (pX, pY) => {
         let size = 100;
         let angle = 30/180*Math.PI

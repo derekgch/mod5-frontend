@@ -37,6 +37,12 @@ class ClickAway extends React.Component {
     open: false,
   };
 
+  shouldComponentUpdate(nextProps, nextState){
+    if(nextState.open !== this.state.open) return true;
+    return false;
+    
+  }
+
   handleClick = () => {
     this.setState(state => ({
       open: !state.open,
