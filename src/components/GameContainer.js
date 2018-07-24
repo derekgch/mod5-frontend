@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import Bullet from './Bullet'
 import Instruction from './instruction'
 import DisplayRW from './RightOrWrong'
-import { setLevel } from '../actions'
+import { setLevel } from '../actions';
+import HpBar from './HpBar';
 
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
@@ -20,7 +21,8 @@ class GameContainer extends Component {
         filledOp: [],
         userEq:[],
         userAns: null,
-        checkingAns: false
+        checkingAns: false,
+        hp:100
     }
 
     componentDidMount(){
@@ -89,7 +91,10 @@ class GameContainer extends Component {
 
    checkAnswer=(userAns) => {
         if( userAns!== this.state.answer){
-            this.setState({filledOp:[], userEq: [], userAns:null })
+            if(this.state.hp < 1) {alert("GAME OVER!")}
+            console.log(this.state.hp);
+            
+            this.setState({filledOp:[], userEq: [], userAns:null, hp: this.state.hp -20 })
         }else{
             let data = this.lvlUp();
             // console.log(data)
@@ -284,7 +289,7 @@ class GameContainer extends Component {
 
                 {displayUserEq}
                 <Instruction />
-            
+                <HpBar   completed={this.state.hp}/>
             </div>
         );
     }
