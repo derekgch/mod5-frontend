@@ -31,7 +31,7 @@ class GameContainer extends Component {
     componentDidMount(){
         this.genWord(this.props);
         let qCnt = this.refs.qContainer;
-        this.flyRight(qCnt, 15, "qContainer", 0.1);
+        this.flyLeft(qCnt, 15, "qContainer", 0.1);
         this.togglePos(true, true)
         this.setBasePosFn();
         document.addEventListener("keydown", this.handleKeyEvent)

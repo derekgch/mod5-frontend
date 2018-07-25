@@ -34,6 +34,7 @@ function ButtonAppBar(props) {
             <Menu clickMenu={props.clickMenu}/>
           <Typography variant="title" color="inherit" className={classes.flex}>
             Score: {props.score}
+            
           </Typography>
           {loginOrOut}
 

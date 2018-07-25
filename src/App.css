@@ -72,8 +72,13 @@
   bottom: 1vw;
 }
 
-.scoreContainer{
+
+
+.wordListContianer{
   position: absolute;  
-  left: 45%;
-  top: -3vw;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: 15vw;
 }
