@@ -11,6 +11,7 @@ import HpBar from './HpBar';
 import Score from './Scores';
 import Adapter from '../Adapter'
 
+import { swapVowels } from './GenerateQuestions';
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
 
@@ -47,11 +48,14 @@ class GameContainer extends Component {
     }
 
     lvlUp=( up= true)=>{
-
+        return {digits: 1, box: 1, lvl: 0}
     }
 
     replaceVowel=(word)=>{
-        return word.replace(/[aeiou]/ig,'_').toUpperCase();
+        return word.replace(/[aeiou]/ig,'_');
+    }
+    numberOfVowels=(word)=>{
+        return (word.match(/[aeiou]/ig) || []).length
     }
     
     genWord=({lvl})=>{
@@ -68,7 +72,7 @@ class GameContainer extends Component {
         }
         Adapter.getWord(choice).then(r => r.json())
         .then(data => this.setState({            
-            answer : data.word.word,
+            answer : data.word.word.toUpperCase(),
             def : data.word.def
         }))
     }
@@ -96,17 +100,20 @@ class GameContainer extends Component {
         }else{
             let data = this.lvlUp();
             this.props.setLevel(data);
-            this.setState({score: this.state.score +10, hp: this.state.hp + 5})
-
+            this.setState({filledLetter:[],score: this.state.score +10, hp: this.state.hp + 5})
+            this.genWord(data);
         }
     }
 
     displayAnswer=() =>{
-        if(this.state.filledLetter.length >= this.props.box && this.state.answer.length > 0){
-            let userAns = [], userEq = []
-            if(userEq.length > 0){
-                console.log("user checking")
-                this.setState({checkingAns: true, userEq , userAns},()=>{
+        if(this.state.filledLetter.length >= this.numberOfVowels(this.state.answer) && this.state.answer.length > 0){
+            let userAns = [];
+
+            userAns = swapVowels(this.replaceVowel(this.state.answer), this.state.filledLetter)
+
+            if(userAns.length > 0){
+                console.log("user checking", userAns)
+                this.setState({checkingAns: true , userAns},()=>{
                     setTimeout(() => {                        
                         this.setState({checkingAns:false }, ()=> this.checkAnswer(userAns));               
                         }, 4500);
@@ -191,7 +198,7 @@ class GameContainer extends Component {
                 break;
 
             case ' ':
-                if((now-this.props.lastFired) > 500){
+                if((now-this.props.lastFired) > 100){
                     this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
                 }
                 break;
@@ -280,8 +287,8 @@ class GameContainer extends Component {
                 {this.props.fired.map(e => e.data)}
 
                 {displayUserEq}
-                {/* <Instruction /> */}
-                {this.state.def}
+                <Instruction  hint={this.state.def}/>
+                
                 <HpBar   completed={this.state.hp}/>
                 <Score score={this.state.score}/>
             </div>

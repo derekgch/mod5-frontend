@@ -60,8 +60,15 @@ export function hardMath(digits, boxes) {
 }
 
 
-export function simpleWord(boxes) {
-    
+export function swapVowels(word, userLeter) {
+    let result = word.slice(0);
+    let copyOfLetter = userLeter.slice(0);
+    for (let index = 0; index < result.length; index++) {
+         if(result[index] === "_"){
+            result = result.substr(0, index) + copyOfLetter.shift() + result.substr(index+1)
+         }        
+    }
+    return result;
 }
 
 export function hardWord(boxes) {

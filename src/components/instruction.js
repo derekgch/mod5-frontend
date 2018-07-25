@@ -8,11 +8,12 @@ const textStyle = {
   };
 
 class instruction extends Component {
-    shouldComponentUpdate(){
+    shouldComponentUpdate(nextProps){
+        if(this.props.hint !== nextProps.hint) return true;
         return false;
     }
     render() {
-        const textToDisplay = "<- -> : move   up down: cycle through operations  space: fire"
+        const textToDisplay = this.props.hint ? ` HINT:${this.props.hint}` : "<- -> : move   up down: cycle through operations  space: fire"
         return (
             <div className="insctructionDiv" >
                 <svg width={window.innerWidth}>
