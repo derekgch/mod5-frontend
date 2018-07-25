@@ -53,7 +53,7 @@ class Question extends Component {
     }
 
     render() {
-        let eq = "ab";
+        let eq = "DB OFFLINE";
         let filled = [];
 
         if(this.props.eq){eq = this.props.eq.slice(0);}

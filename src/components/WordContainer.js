@@ -78,6 +78,9 @@ class GameContainer extends Component {
         .then(data => this.setState({            
             answer : data.word.word.toUpperCase(),
             def : data.word.def
+        })).catch(this.setState({            
+            answer : "db offline".toUpperCase(),
+            def : "db offline"
         }))
     }
 
