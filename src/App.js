@@ -4,7 +4,8 @@ import NavBar from './components/NavBar'
 import Login from './components/Login'
 import GameContainer from './components/GameContainer'
 import WordContainer from './components/WordContainer'
-import {login, clickLogin, logout} from './actions'
+import {login, clickLogin, logout, clickMenu, setScore} from './actions'
+import WordList from './components/WordList';
 import Adapter from './Adapter'
 
 import { connect } from 'react-redux'
@@ -19,17 +20,44 @@ class App extends Component {
     }
   }
 
+  displayContent=() =>{
+    let display = null;
+    switch (this.props.menu) {
+      case "math":
+       display = <GameContainer 
+       score = {this.props.score}
+       setScore={this.props.setScore} />;
+        break;
+      case "word":
+       display = <WordContainer 
+       score = {this.props.score}
+       setScore={this.props.setScore} />;
+        break;
+      case "list":
+       display = <WordList 
+       id= {this.props.currentUserId}/>;
+        break;
+
+      default:
+       display = <GameContainer 
+       score = {this.props.score}
+       setScore={this.props.setScore} />;
+        break;
+    }
+    return display;
+  }
+
   render() {
-    const displayGame = this.props.isMath ? <GameContainer /> : <WordContainer />
     return (
       <div className="App">
         <NavBar currentUserId={this.props.currentUserId}
+        score = {this.props.score}
         logOut={this.handleLogout}
+        clickMenu={this.props.clickMenu}
         onClick={() => this.props.showLogin(!this.props.showLoginPage)}/>
         {this.props.showLoginPage ? 
-        <Login loggedIn={this.props.loggedIn}/> : displayGame
+        <Login loggedIn={this.props.loggedIn}/> : this.displayContent()
         }
-
       </div>
     );
   }
@@ -39,8 +67,6 @@ class App extends Component {
     localStorage.removeItem("token");
   }
 
-
-
 }
 
 const mapStateToProps = (state) => {
@@ -48,7 +74,8 @@ const mapStateToProps = (state) => {
     showLoginPage: state.showLoginPage,
     currentUserName: state.currentUserName,
     currentUserId: state.currentUserId,
-    isMath: state.isMath
+    menu: state.menu,
+    score: state.score
   }
 }
 
@@ -57,6 +84,8 @@ const mapDispatchToProps = (dispatch) => {
     showLogin: (data)=> dispatch(clickLogin(data)),
     loggedIn:(data) => dispatch(login(data)),
     logOut:() => dispatch(logout()),
+    clickMenu: (data) => dispatch(clickMenu(data)),
+    setScore: (data) => dispatch(setScore(data)),
   }
 }
 

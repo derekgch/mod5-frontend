@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import grey from '@material-ui/core/colors/grey';
 import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import red from '@material-ui/core/colors/red';
 
 const primary = "white"; // #F44336
@@ -55,10 +56,14 @@ class ClickAway extends React.Component {
     });
   };
 
+  handleClickMenu =(event) => {
+    // console.log(event.target.id)
+    this.props.clickMenu(event.target.id);
+  }
+
   render() {
     const { classes } = this.props;
     const { open } = this.state;
-    const fake = <div className={classes.fake} />;
 
     return (
       <div className={classes.root}>
@@ -66,11 +71,15 @@ class ClickAway extends React.Component {
           <div>
             <Button onClick={this.handleClick}>
                 <MenuIcon style={{color: primary}}/>
+                Menu
             </Button>
             {open ? (
               <Paper className={classes.paper}>
-                {fake}
-                {fake}
+
+              <MenuItem onClick={this.handleClickMenu} id="math">Math</MenuItem>
+              <MenuItem onClick={this.handleClickMenu} id="word" >Word</MenuItem>
+              <MenuItem onClick={this.handleClickMenu} id="list" >Word List</MenuItem>
+
 
               </Paper>
             ) : null}

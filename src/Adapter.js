@@ -41,7 +41,7 @@ class Adapter {
     }
 
 
-    static postGame(id, points){
+    static postGame(id, points, type="math"){
         let config ={
             method: 'POST', 
             headers: {
@@ -49,11 +49,37 @@ class Adapter {
             },
             body: JSON.stringify({
                 user_id: id,
-                points: points
+                points,
+                type
             })
         }
         return fetch(`${URL}games/`, config)
     }
+
+    static patchWord(id, word){
+        let config ={
+            method: 'PATCH', 
+            headers: {
+                'Content-Type': 'application/JSON'
+            },
+            body: JSON.stringify({
+                word,                
+            })
+        }
+        return fetch(`${URL}users/${id}`, config)
+    }
+
+
+    static getUserWords(id, token){
+        let config ={
+            headers: {
+                'Content-Type': 'application/JSON',
+                'Authorization': token
+            },
+        }
+        return fetch(`${URL}users/${id}`, config)
+    }
+
 
     static getWord(choice){
         return fetch(`${WordUrl}${choice}`)

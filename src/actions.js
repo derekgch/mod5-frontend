@@ -6,7 +6,26 @@ export const SET_BASE_POS ='SET_BASE_POS'
 export const FIRE_EVENT='FIRE_EVENT'
 export const UPDATE_FIRE ='UPDATE_FIRE'
 export const SET_LEVEL_EVENT = "SET_LEVEL_EVENT"
+export const SET_MENU_EVENT = "SET_MENU_EVENT"
+export const SET_SCORE_EVENT = "SET_SCORE_EVENT"
 
+
+
+
+
+export function setScore(data) {
+    return {
+        type: SET_SCORE_EVENT,
+        payload: data
+    }
+}
+
+export function clickMenu(data) {
+    return {
+        type: SET_MENU_EVENT,
+        payload: data
+    }
+}
 
 export function login(data) {
     return {

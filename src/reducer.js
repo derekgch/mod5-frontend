@@ -9,10 +9,11 @@ const initialState = {
     basePos: 500,
     fired: [],
     lastFired: null,
-    isMath: false,
+    menu: "math",
     digits: 1,
     box: 1,
     lvl: 0,
+    score: 0,
 }
 
 
@@ -23,7 +24,11 @@ function reducer (state = initialState, action) {
 
     
         switch(action.type) {
+            case "SET_SCORE_EVENT":
 
+                return {...state, score: action.payload}
+            case "SET_MENU_EVENT":
+                return {...state, menu: action.payload }
             case "SET_LEVEL_EVENT":
                 console.log("action", action.payload)
                 let {digits, box, lvl} = action.payload;
@@ -34,10 +39,13 @@ function reducer (state = initialState, action) {
                 return { ...state, showLoginPage: action.payload }
 
             case "LOGIN_EVENT":
-
+                let payload = JSON.parse(action.payload);
+                // console.log(payload);
+                // console.log(JSON.parse(payload));
+                
                 return { ...state, 
-                    currentUserId: action.payload.id, 
-                    currentUserName: action.payload.user_name,
+                    currentUserId: payload.id, 
+                    currentUserName: payload.user_name,
                     showLoginPage: false }
             case "LOGOUT_EVENT":
 

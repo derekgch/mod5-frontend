@@ -26,7 +26,6 @@ class GameContainer extends Component {
         userAns:[],
         checkingAns: false,
         hp:100,
-        score: 0,
     }
 
     componentDidMount(){
@@ -94,6 +93,7 @@ class GameContainer extends Component {
    }
 
    checkAnswer=(userAns) => {
+       console.log(this.props.userId)
        console.log("checking ans", userAns, this.state.filledLetter, this.state.answer)
         if( userAns!== this.state.answer){
             this.setState({filledLetter:[], userEq: [], userAns:null, hp: this.state.hp -20 }, ()=>{
@@ -102,11 +102,14 @@ class GameContainer extends Component {
                     this.gameOver()
                 }            
             })
+            Adapter.patchWord(this.props.userId, this.state.answer).catch()
+
         }else{
             let data = this.lvlUp();
             this.props.setLevel(data);
-            this.setState({filledLetter:[],score: this.state.score +10, hp: this.state.hp + 5})
+            this.setState({filledLetter:[], hp: this.state.hp + 5})
             this.genWord(data);
+            this.props.setScore(this.props.score + 10)
         }
     }
 
@@ -131,14 +134,14 @@ class GameContainer extends Component {
         let data = this.lvlUp(false)
         this.setState({
             hp:100,
-            score: 0,
         })
         this.genWord(data);
         this.props.setLevel(data);
+        this.props.setScore(0);
     }
 
     gameOver=()=>{
-        Adapter.postGame(this.props.userId, this.state.score)
+        Adapter.postGame(this.props.userId, this.props.score)
         this.resetGame();
     }
 
@@ -295,7 +298,7 @@ class GameContainer extends Component {
                 <Instruction  hint={swapWords(this.state.def, this.state.answer)}/>
                 
                 <HpBar   completed={this.state.hp}/>
-                <Score score={this.state.score}/>
+                {/* <Score score={this.state.score}/> */}
             </div>
         );
     }
@@ -310,6 +313,7 @@ function mapStateToProps(state){
         box: state.box,
         lvl: state.lvl,
         userId: state.currentUserId,
+        score: state.score,
     }
 }
 

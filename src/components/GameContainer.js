@@ -25,7 +25,6 @@ class GameContainer extends Component {
         userAns: null,
         checkingAns: false,
         hp:100,
-        score: 0,
     }
 
     componentDidMount(){
@@ -113,8 +112,11 @@ class GameContainer extends Component {
             })
         }else{
             let data = this.lvlUp();
+            let hp = this.state.hp + 5;
+            if(hp > 100) hp =100;
             this.props.setLevel(data);
-            this.setState({score: this.state.score +10, hp: this.state.hp + 5})
+            this.props.setScore(this.props.score+10)
+            this.setState({hp});
             this.genNewEq(data);
 
         }
@@ -140,14 +142,14 @@ class GameContainer extends Component {
         let data = this.lvlUp(false)
         this.setState({
             hp:100,
-            score: 0,
         })
         this.genNewEq(data);
         this.props.setLevel(data);
+        this.props.setScore(0);
     }
 
     gameOver=()=>{
-        Adapter.postGame(this.props.userId, this.state.score)
+        Adapter.postGame(this.props.userId, this.props.score)
         this.resetGame();
     }
 
@@ -318,7 +320,7 @@ class GameContainer extends Component {
                 {displayUserEq}
                 <Instruction />
                 <HpBar   completed={this.state.hp}/>
-                <Score score={this.state.score}/>
+                {/* <Score score={this.state.score}/> */}
             </div>
         );
     }
@@ -333,6 +335,7 @@ function mapStateToProps(state){
         box: state.box,
         lvl: state.lvl,
         userId: state.currentUserId,
+        score: state.score,
     }
 }
 
