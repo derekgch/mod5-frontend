@@ -3,6 +3,7 @@ import './App.css';
 import NavBar from './components/NavBar'
 import Login from './components/Login'
 import GameContainer from './components/GameContainer'
+import WordContainer from './components/WordContainer'
 import {login, clickLogin, logout} from './actions'
 import Adapter from './Adapter'
 
@@ -19,16 +20,15 @@ class App extends Component {
   }
 
   render() {
-    Adapter.seedWords();
-
+    const displayGame = this.props.isMath ? <GameContainer /> : <WordContainer />
     return (
       <div className="App">
         <NavBar currentUserId={this.props.currentUserId}
         logOut={this.handleLogout}
         onClick={() => this.props.showLogin(!this.props.showLoginPage)}/>
         {this.props.showLoginPage ? 
-        <Login loggedIn={this.props.loggedIn}/> : 
-        <GameContainer />}
+        <Login loggedIn={this.props.loggedIn}/> : displayGame
+        }
 
       </div>
     );
@@ -47,7 +47,8 @@ const mapStateToProps = (state) => {
   return {
     showLoginPage: state.showLoginPage,
     currentUserName: state.currentUserName,
-    currentUserId: state.currentUserId
+    currentUserId: state.currentUserId,
+    isMath: state.isMath
   }
 }
 

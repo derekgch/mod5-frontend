@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Question from './Question'
+
+import WordQuestion from './WordQuestion'
 import FirePlatform from './FirePlatform'
 import { connect } from 'react-redux'
 import Bullet from './Bullet'
@@ -12,24 +13,23 @@ import Adapter from '../Adapter'
 
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
-import { simpleMath, multiplyMath, hardMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
 
-
+const vowels="AEIOU";
 class GameContainer extends Component {
     state = {
-        opIndex: 0,
-        question: null,
+        vowelIndex: 0,
+        def: null,
         answer: null,
-        filledOp: [],
-        userEq:[],
-        userAns: null,
+        filledLetter: [],
+        userEq: [],
+        userAns:[],
         checkingAns: false,
         hp:100,
         score: 0,
     }
 
     componentDidMount(){
-        this.genNewEq(this.props);
+        this.genWord(this.props);
         let qCnt = this.refs.qContainer;
         this.flyRight(qCnt, 15, "qContainer", 0.1);
         this.togglePos(true, true)
@@ -47,55 +47,37 @@ class GameContainer extends Component {
     }
 
     lvlUp=( up= true)=>{
-        let {digits, box, lvl} = this.props;
-        let data ={digits, box, lvl};
 
-        if(!up){
-            data.digits = 1;
-            data.box = 1;
-            data.lvl =0;
-            return data;
-        }
-
-        if(this.props.box < 3){
-            data.box++;
-            return data;
-        }else if(this.props.lvl < 2) {
-            data.lvl++;
-            data.box =1;
-            return data;
-        } else{
-            data.digits++;
-            data.box =1;
-            data.lvl =0;
-            return data;
-        }
     }
 
-
-    genNewEq=({box, lvl, digits})=>{
-        let eq = [1, "+", 1];
-        let ans;
-        console.log("this.props.box", box)
-        if(lvl === 0)
-            eq = simpleMath(digits, box);
-        if(lvl === 1 )
-            eq = multiplyMath(digits, box);
-        ans = calAnswer(eq);
-
-        if(lvl === 2){
-            eq = hardMath(digits, box);
-            ans = calAnswer(eq);
-            if(!Number.isInteger(ans)) ans = parseFloat( ans.toPrecision(4) );
-        }         
-        this.setState({question:eq, answer:ans, filledOp:[]})
+    replaceVowel=(word)=>{
+        return word.replace(/[aeiou]/ig,'_').toUpperCase();
+    }
+    
+    genWord=({lvl})=>{
+        let choice = "words"
+        switch (lvl) {
+            case 1:
+                choice = "long"
+                break;
+            case 2:
+                choice = "hard"
+                break;
+            default:
+                break;
+        }
+        Adapter.getWord(choice).then(r => r.json())
+        .then(data => this.setState({            
+            answer : data.word.word,
+            def : data.word.def
+        }))
     }
 
 
    collided = (bulletTime) =>{
        if(!this.state.checkingAns){
         let found = this.props.fired.find( e => e.time === bulletTime)
-        this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
+        this.setState({filledLetter: [...this.state.filledLetter, found.item]}, this.displayAnswer)
 
         let active = this.props.fired.filter( e => e.time !== bulletTime)
         this.props.updateFired("UPDATE_FIRE", active)
@@ -103,9 +85,9 @@ class GameContainer extends Component {
    }
 
    checkAnswer=(userAns) => {
-       console.log("checking ans", userAns, this.state.filledOp, this.state.question)
+       console.log("checking ans", userAns, this.state.filledLetter, this.state.answer)
         if( userAns!== this.state.answer){
-            this.setState({filledOp:[], userEq: [], userAns:null, hp: this.state.hp -20 }, ()=>{
+            this.setState({filledLetter:[], userEq: [], userAns:null, hp: this.state.hp -20 }, ()=>{
                 if(this.state.hp < 1) {
                     alert("GAME OVER!");
                     this.gameOver()
@@ -115,16 +97,13 @@ class GameContainer extends Component {
             let data = this.lvlUp();
             this.props.setLevel(data);
             this.setState({score: this.state.score +10, hp: this.state.hp + 5})
-            this.genNewEq(data);
 
         }
     }
 
     displayAnswer=() =>{
-        if(this.state.filledOp.length >= this.props.box && this.state.question.length > 0){
-            let userEq = swapOP(this.state.question, this.state.filledOp) 
-            let userAns =calAnswer(userEq);
-            if(!Number.isInteger(userAns)) userAns = parseFloat (userAns.toPrecision(4));
+        if(this.state.filledLetter.length >= this.props.box && this.state.answer.length > 0){
+            let userAns = [], userEq = []
             if(userEq.length > 0){
                 console.log("user checking")
                 this.setState({checkingAns: true, userEq , userAns},()=>{
@@ -142,7 +121,7 @@ class GameContainer extends Component {
             hp:100,
             score: 0,
         })
-        this.genNewEq(data);
+        this.genWord(data);
         this.props.setLevel(data);
     }
 
@@ -153,28 +132,16 @@ class GameContainer extends Component {
 
 
    cycleOp=(keyup, level=this.props.lvl) => {
-    let index = this.state.opIndex;
+    let index = this.state.vowelIndex;
         if(keyup){
             index++;
         }else{
             index --;
         }
 
-        if(level === 0){ //only + and - operations
-            if(index <0) index = 1
-            index = index%2
-        }
-
-        if(level === 1){ // only +, -, and * operations
-            if(index <0) index = 2
-            index = index%3
-        }      
-        
-        if(level === 2){ //  +, -, * and / operations
-            if(index <0) index = 3
-            index = index%4
-        } 
-        this.setState({opIndex:index})
+        if(index <0) index = 4
+        index = index%5        
+        this.setState({vowelIndex:index})
    }
 
    togglePos=(left, start)=>{
@@ -192,6 +159,7 @@ class GameContainer extends Component {
         ease: Sine
       })              
    }
+
 
     handleKeyEvent=(event) => {
         
@@ -270,11 +238,11 @@ class GameContainer extends Component {
         qContainer = {this.refs.qContainer}
         startAt={this.props.basePos} 
         collided ={this.collided}
-        item = {ops[this.state.opIndex]}
+        item = {vowels[this.state.vowelIndex]}
         key={UUID()} 
         time={now}/>, 
         time:now,
-        item:ops[this.state.opIndex]
+        item:vowels[this.state.vowelIndex]
         }
     }
 
@@ -282,11 +250,7 @@ class GameContainer extends Component {
        let { userEq, userAns, answer } = this.state;
         return (
             <div className='userEqContainer'>
-            <Question eq={userEq} 
-            ans={userAns} 
-            filled={this.state.filledOp}
             
-            /> 
             <DisplayRW right={userAns === answer}/>
             </div>
         )
@@ -295,11 +259,12 @@ class GameContainer extends Component {
 
     render() {
         const displayUserEq = this.state.checkingAns ? this.showUserAns() : null;
+        const eq = this.state.answer ? this.replaceVowel(this.state.answer) :null;
         return (
             <div  id="gameContainer">       
                     <div  className= "fpContainer" ref={c => this.firePlatform = c}>
                     <FirePlatform x={55} y={10}  
-                                op = {ops[this.state.opIndex]}
+                                op = {vowels[this.state.vowelIndex]}
                                 key= "fireplatform__XD1"
                                 setBasePos ={this.props.setBasePos}
                                 togglePos={this.togglePos}
@@ -307,16 +272,16 @@ class GameContainer extends Component {
                     </div>
                 
                 <div className='questionContainer'  ref ="qContainer">
-                    <Question eq={this.state.question} 
-                    ans={this.state.answer} 
-                    filled={this.state.filledOp}
-                    
-                    /> 
+                <WordQuestion 
+                filled = {this.state.filledLetter}
+                eq = {eq}
+                />
                 </div>
                 {this.props.fired.map(e => e.data)}
 
                 {displayUserEq}
-                <Instruction />
+                {/* <Instruction /> */}
+                {this.state.def}
                 <HpBar   completed={this.state.hp}/>
                 <Score score={this.state.score}/>
             </div>

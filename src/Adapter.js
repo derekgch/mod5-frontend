@@ -1,5 +1,8 @@
 const URL="http://localhost:4000/"
-const WordUrl = "http://localhost:4000/api/v1/words"
+const WordUrl = "http://localhost:4000/api/v1/"
+
+// words, long, hard
+
 
 class Adapter {
 
@@ -50,6 +53,10 @@ class Adapter {
             })
         }
         return fetch(`${URL}games/`, config)
+    }
+
+    static getWord(choice){
+        return fetch(`${WordUrl}${choice}`)
     }
 
 }

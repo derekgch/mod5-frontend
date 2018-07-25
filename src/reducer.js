@@ -9,6 +9,7 @@ const initialState = {
     basePos: 500,
     fired: [],
     lastFired: null,
+    isMath: false,
     digits: 1,
     box: 1,
     lvl: 0,

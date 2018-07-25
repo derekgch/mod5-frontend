@@ -17,6 +17,10 @@ class Bullet extends React.Component {
         this.interval = setInterval(this.isHit, 100); 
     }
 
+    componentWillUnmount(){
+        this.clearIntervalFn();   
+    }
+
     shouldComponentUpdate(nextProps){
         // if(nextProps.hit) return true;
         return false;
@@ -64,8 +68,8 @@ class Bullet extends React.Component {
     
 
     render() {
-        let operator = this.props.op;
-        if(operator === "/") operator ="÷"
+        let item = this.props.item;
+        if(item === "/") item ="÷"
         return (
                 <div className={`bullet ${this.props.time}`} ref="bullet">
                     <svg width="70" height="70">
@@ -74,7 +78,7 @@ class Bullet extends React.Component {
                     x={this.props.position.x}
                     y={this.props.position.y}
                     >
-                    {operator}
+                    {item}
                     </text>
                     </svg>
                 </div>
