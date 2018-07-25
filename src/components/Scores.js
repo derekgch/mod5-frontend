@@ -19,7 +19,7 @@ class Scores extends Component {
     render() {
         return (
             <div className="scoreContainer">
-                <svg width="120" >
+                <svg width="150" height="120" >
                     <text {...textStyle} x={0} y={100} >{this.props.score}</text>
                 </svg>
             </div>

@@ -11,7 +11,7 @@ import HpBar from './HpBar';
 import Score from './Scores';
 import Adapter from '../Adapter'
 
-import { swapVowels } from './GenerateQuestions';
+import { swapVowels, replaceVowel, numberOfVowels, swapWords } from './GenerateQuestions';
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
 
@@ -48,15 +48,20 @@ class GameContainer extends Component {
     }
 
     lvlUp=( up= true)=>{
-        return {digits: 1, box: 1, lvl: 0}
+        if(!up) return {digits:1, box:1, lvl:0}
+
+        let {lvl, box, digits} = this.props;
+        if(box < 3) {
+            box++;
+        }else{
+            lvl++;
+            box = 1;
+        }
+        if(lvl > 2) lvl = 2;
+        return {digits, box, lvl}
     }
 
-    replaceVowel=(word)=>{
-        return word.replace(/[aeiou]/ig,'_');
-    }
-    numberOfVowels=(word)=>{
-        return (word.match(/[aeiou]/ig) || []).length
-    }
+
     
     genWord=({lvl})=>{
         let choice = "words"
@@ -106,10 +111,10 @@ class GameContainer extends Component {
     }
 
     displayAnswer=() =>{
-        if(this.state.filledLetter.length >= this.numberOfVowels(this.state.answer) && this.state.answer.length > 0){
+        if(this.state.filledLetter.length >= numberOfVowels(this.state.answer) && this.state.answer.length > 0){
             let userAns = [];
 
-            userAns = swapVowels(this.replaceVowel(this.state.answer), this.state.filledLetter)
+            userAns = swapVowels(replaceVowel(this.state.answer), this.state.filledLetter)
 
             if(userAns.length > 0){
                 console.log("user checking", userAns)
@@ -198,7 +203,7 @@ class GameContainer extends Component {
                 break;
 
             case ' ':
-                if((now-this.props.lastFired) > 100){
+                if((now-this.props.lastFired) > 500){
                     this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
                 }
                 break;
@@ -266,7 +271,7 @@ class GameContainer extends Component {
 
     render() {
         const displayUserEq = this.state.checkingAns ? this.showUserAns() : null;
-        const eq = this.state.answer ? this.replaceVowel(this.state.answer) :null;
+        const eq = this.state.answer ? replaceVowel(this.state.answer) :null;
         return (
             <div  id="gameContainer">       
                     <div  className= "fpContainer" ref={c => this.firePlatform = c}>
@@ -287,7 +292,7 @@ class GameContainer extends Component {
                 {this.props.fired.map(e => e.data)}
 
                 {displayUserEq}
-                <Instruction  hint={this.state.def}/>
+                <Instruction  hint={swapWords(this.state.def, this.state.answer)}/>
                 
                 <HpBar   completed={this.state.hp}/>
                 <Score score={this.state.score}/>
@@ -312,7 +317,7 @@ function mapDispathToProps(dispatch){
     return {
         setBasePos: (type, data) => dispatch({type, payload:{data} }),
         setQPos: (type, data) => dispatch({type, payload:{data} }),
-        setFired: (type, data, time, op) => dispatch({type, payload:{data}, time, op}),
+        setFired: (type, data, time) => dispatch({type, payload:{data}, time}),
         updateFired: (type, data) => dispatch({type, payload:{data}}),
         clearBullet: (type, data) => dispatch({type, payload:{data}}),     
         setLevel: (data) => dispatch(setLevel(data)),   

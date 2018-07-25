@@ -71,8 +71,20 @@ export function swapVowels(word, userLeter) {
     return result;
 }
 
-export function hardWord(boxes) {
-    
+export function replaceVowel(word){
+    return word.replace(/[aeiou]/ig,'_');
+}
+
+export function numberOfVowels(word){
+    return (word.match(/[aeiou]/ig) || []).length
+}
+
+export function swapWords(def, word) {
+    if(def&&word){
+        const wordNoVowel = replaceVowel(word).toLowerCase();
+        return def.replace(new RegExp(word.toLowerCase(),'g'), wordNoVowel);
+    }
+    return "";
 }
 
 export function calAnswer(array){
