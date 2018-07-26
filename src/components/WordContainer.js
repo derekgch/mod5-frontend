@@ -28,7 +28,7 @@ class GameContainer extends Component {
     }
 
     componentDidMount(){
-        this.filterBullet((new Date()).getTime())
+        this.props.updateFired("UPDATE_FIRE", [])
         this.genWord(this.props);
         let qCnt = this.refs.qContainer;
         this.flyLeft(qCnt, 15, "qContainer", 0.1);
@@ -192,11 +192,6 @@ class GameContainer extends Component {
         
         const now = (new Date()).getTime();
         let active = this.filterBullet(now)
-    //      this.props.fired
-    //     if(this.props.fired.length > 0){
-    //         active = this.props.fired.filter( e => (now - e.time)< 6000)
-    //         this.props.updateFired("UPDATE_FIRE", active)
-    //    }
 
         switch (event.key) {
             case 'ArrowLeft':

@@ -27,7 +27,8 @@ class GameContainer extends Component {
     }
 
     componentDidMount(){
-        this.filterBullet((new Date()).getTime());
+        this.props.updateFired("UPDATE_FIRE", []);
+        // this.filterBullet((new Date()).getTime());
         this.genNewEq(this.props);
         let qCnt = this.refs.qContainer;
         this.flyLeft(qCnt, 15, "qContainer", 0.1);

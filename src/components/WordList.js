@@ -39,9 +39,12 @@ class WordList extends Component {
     }
 
     toDisplay=() => {
-        return this.state.words.map(e => 
-         <Grid key={UUID()} ><Word word={e.word} def={e.def} /> </Grid>
-        )
+        if(this.state.words.length > 0) 
+            return this.state.words.map(e => 
+            <Grid key={UUID()} ><Word word={e.word} def={e.def} /> </Grid>)
+        else{
+            return <Grid key={UUID()} ><Word word={`Empty`} def={`Nothing, nil, null`} /> </Grid>
+        }
     }
 
     render() {
