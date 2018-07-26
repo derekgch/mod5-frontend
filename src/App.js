@@ -7,6 +7,7 @@ import WordContainer from './components/WordContainer'
 import {login, clickLogin, logout, clickMenu, setScore} from './actions'
 import WordList from './components/WordList';
 import ScoreBoard from './components/ScoreBoard'
+import Multiplayer from './components/multi/multiContainer'
 
 import { connect } from 'react-redux'
 
@@ -50,8 +51,18 @@ class App extends Component {
        setScore={this.props.setScore} />;
         break;
     }
+    //testing multiplayer
+    display= <Multiplayer />
+
     return display;
   }
+
+
+  handleLogout=()=>{
+    this.props.logOut();
+    localStorage.removeItem("token");
+  }
+
 
   render() {
     return (
@@ -69,10 +80,7 @@ class App extends Component {
     );
   }
 
-  handleLogout=()=>{
-    this.props.logOut();
-    localStorage.removeItem("token");
-  }
+
 
 }
 
