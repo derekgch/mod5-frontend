@@ -8,7 +8,6 @@ import Instruction from './instruction'
 import DisplayRW from './RightOrWrong'
 import { setLevel } from '../actions';
 import HpBar from './HpBar';
-import Score from './Scores';
 import Adapter from '../Adapter'
 
 import { swapVowels, replaceVowel, numberOfVowels, swapWords } from './GenerateQuestions';
@@ -29,6 +28,7 @@ class GameContainer extends Component {
     }
 
     componentDidMount(){
+        this.filterBullet((new Date()).getTime())
         this.genWord(this.props);
         let qCnt = this.refs.qContainer;
         this.flyLeft(qCnt, 15, "qContainer", 0.1);
@@ -79,7 +79,7 @@ class GameContainer extends Component {
             answer : data.word.word.toUpperCase(),
             def : data.word.def
         })).catch(this.setState({            
-            answer : "db offline".toUpperCase(),
+            answer : "",
             def : "db offline"
         }))
     }
@@ -96,7 +96,6 @@ class GameContainer extends Component {
    }
 
    checkAnswer=(userAns) => {
-       console.log(this.props.userId)
        console.log("checking ans", userAns, this.state.filledLetter, this.state.answer)
         if( userAns!== this.state.answer){
             this.setState({filledLetter:[], userEq: [], userAns:null, hp: this.state.hp -20 }, ()=>{
@@ -109,8 +108,10 @@ class GameContainer extends Component {
 
         }else{
             let data = this.lvlUp();
+            let hp = this.state.hp + 5;
+            if(hp > 100) hp = 100;
             this.props.setLevel(data);
-            this.setState({filledLetter:[], hp: this.state.hp + 5})
+            this.setState({filledLetter:[], hp})
             this.genWord(data);
             this.props.setScore(this.props.score + 10)
         }
@@ -123,7 +124,6 @@ class GameContainer extends Component {
             userAns = swapVowels(replaceVowel(this.state.answer), this.state.filledLetter)
 
             if(userAns.length > 0){
-                console.log("user checking", userAns)
                 this.setState({checkingAns: true , userAns},()=>{
                     setTimeout(() => {                        
                         this.setState({checkingAns:false }, ()=> this.checkAnswer(userAns));               
@@ -144,7 +144,7 @@ class GameContainer extends Component {
     }
 
     gameOver=()=>{
-        Adapter.postGame(this.props.userId, this.props.score)
+        Adapter.postGame(this.props.userId, this.props.score, "word")
         this.resetGame();
     }
 
@@ -179,14 +179,24 @@ class GameContainer extends Component {
    }
 
 
+   filterBullet=(now)=>{
+    let active = this.props.fired
+    if(this.props.fired.length > 0){
+        active = this.props.fired.filter( e => (now - e.time)< 6000)
+        this.props.updateFired("UPDATE_FIRE", active)
+   }
+   return active;
+   }
+
     handleKeyEvent=(event) => {
         
         const now = (new Date()).getTime();
-        let active = this.props.fired
-        if(this.props.fired.length > 0){
-            active = this.props.fired.filter( e => (now - e.time)< 6000)
-            this.props.updateFired("UPDATE_FIRE", active)
-       }
+        let active = this.filterBullet(now)
+    //      this.props.fired
+    //     if(this.props.fired.length > 0){
+    //         active = this.props.fired.filter( e => (now - e.time)< 6000)
+    //         this.props.updateFired("UPDATE_FIRE", active)
+    //    }
 
         switch (event.key) {
             case 'ArrowLeft':

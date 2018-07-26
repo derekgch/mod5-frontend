@@ -31,9 +31,11 @@ function ButtonAppBar(props) {
     <div className={classes.root} >
       <AppBar position="static" style={{ backgroundColor: '#2196F3' }}>
         <Toolbar >
-            <Menu clickMenu={props.clickMenu}/>
+            <Menu clickMenu={props.clickMenu} userId={props.userId}/>
           <Typography variant="title" color="inherit" className={classes.flex}>
-            Score: {props.score}
+            <Button color="inherit" 
+            onClick={() => props.clickMenu("score")}
+            style={{fontSize: "20px"}}>Score: {props.score} </Button>
             
           </Typography>
           {loginOrOut}

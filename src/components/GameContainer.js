@@ -7,7 +7,6 @@ import Instruction from './instruction'
 import DisplayRW from './RightOrWrong'
 import { setLevel } from '../actions';
 import HpBar from './HpBar';
-import Score from './Scores';
 import Adapter from '../Adapter'
 
 import UUID from 'uuid'
@@ -28,6 +27,7 @@ class GameContainer extends Component {
     }
 
     componentDidMount(){
+        this.filterBullet((new Date()).getTime());
         this.genNewEq(this.props);
         let qCnt = this.refs.qContainer;
         this.flyLeft(qCnt, 15, "qContainer", 0.1);
@@ -195,14 +195,20 @@ class GameContainer extends Component {
       })              
    }
 
+
+   filterBullet=(now)=>{
+    let active = this.props.fired
+    if(this.props.fired.length > 0){
+        active = this.props.fired.filter( e => (now - e.time)< 6000)
+        this.props.updateFired("UPDATE_FIRE", active)
+   }
+   return active;
+   }
+
     handleKeyEvent=(event) => {
         
         const now = (new Date()).getTime();
-        let active = this.props.fired
-        if(this.props.fired.length > 0){
-            active = this.props.fired.filter( e => (now - e.time)< 6000)
-            this.props.updateFired("UPDATE_FIRE", active)
-       }
+        let active = this.filterBullet(now)
 
         switch (event.key) {
             case 'ArrowLeft':

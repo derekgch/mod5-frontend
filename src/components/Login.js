@@ -97,9 +97,6 @@ class InputAdornments extends React.Component {
     .then(this.handleFetchError)
     .then(this.handleClickLogin)
     .catch(() => alert("you already signed up"))
-
-
-
   }
 
   handleFetchError = (response) => {
@@ -119,7 +116,7 @@ class InputAdornments extends React.Component {
     // console.log(this.state);
     
     return (
-        <div>
+        <div className = "loginContainer">
             <div className={classes.root}>
                 
                 <TextField

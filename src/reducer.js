@@ -28,7 +28,7 @@ function reducer (state = initialState, action) {
 
                 return {...state, score: action.payload}
             case "SET_MENU_EVENT":
-                return {...state, menu: action.payload }
+                return {...state, menu: action.payload, showLoginPage:false }
             case "SET_LEVEL_EVENT":
                 console.log("action", action.payload)
                 let {digits, box, lvl} = action.payload;
@@ -39,8 +39,7 @@ function reducer (state = initialState, action) {
                 return { ...state, showLoginPage: action.payload }
 
             case "LOGIN_EVENT":
-                let payload = JSON.parse(action.payload);
-                // console.log(payload);
+                const payload = action.payload;
                 // console.log(JSON.parse(payload));
                 
                 return { ...state, 

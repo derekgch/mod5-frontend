@@ -9,6 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import red from '@material-ui/core/colors/red';
 
+
 const primary = "white"; // #F44336
 
 
@@ -78,7 +79,10 @@ class ClickAway extends React.Component {
 
               <MenuItem onClick={this.handleClickMenu} id="math">Math</MenuItem>
               <MenuItem onClick={this.handleClickMenu} id="word" >Word</MenuItem>
+
+              {this.props.userId? 
               <MenuItem onClick={this.handleClickMenu} id="list" >Word List</MenuItem>
+              : null}
 
 
               </Paper>

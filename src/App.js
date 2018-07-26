@@ -6,7 +6,7 @@ import GameContainer from './components/GameContainer'
 import WordContainer from './components/WordContainer'
 import {login, clickLogin, logout, clickMenu, setScore} from './actions'
 import WordList from './components/WordList';
-import Adapter from './Adapter'
+import ScoreBoard from './components/ScoreBoard'
 
 import { connect } from 'react-redux'
 
@@ -14,7 +14,8 @@ class App extends Component {
   componentDidMount(){
     const token = localStorage.getItem("token");
     if(!!token){
-      const data = atob(token.split(".")[1]);
+      const data = JSON.parse( atob(token.split(".")[1]));
+      
       this.props.loggedIn(data);
       // console.log(data)
     }
@@ -38,6 +39,11 @@ class App extends Component {
        id= {this.props.currentUserId}/>;
         break;
 
+      case "score":
+        display = <ScoreBoard 
+        id= {this.props.currentUserId}/>;
+        break;
+      
       default:
        display = <GameContainer 
        score = {this.props.score}
@@ -52,6 +58,7 @@ class App extends Component {
       <div className="App">
         <NavBar currentUserId={this.props.currentUserId}
         score = {this.props.score}
+        userId = {this.props.currentUserId}
         logOut={this.handleLogout}
         clickMenu={this.props.clickMenu}
         onClick={() => this.props.showLogin(!this.props.showLoginPage)}/>

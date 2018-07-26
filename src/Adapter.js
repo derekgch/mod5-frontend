@@ -1,5 +1,6 @@
 const URL="http://localhost:4000/"
 const WordUrl = "http://localhost:4000/api/v1/"
+const GAMETOP5 = "http://localhost:4000/games/top"
 
 // words, long, hard
 
@@ -78,6 +79,10 @@ class Adapter {
             },
         }
         return fetch(`${URL}users/${id}`, config)
+    }
+
+    static getTop5(){
+        return fetch(GAMETOP5)
     }
 
 
