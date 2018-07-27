@@ -59,8 +59,8 @@ class OtherBullet extends React.Component {
             y:1200,
             rotation: 0,
             delay: delay, 
-            onComplete: this.clearIntervalFn,
-            onCompleteParams:[el, amt, name, delay],
+            onComplete: this.props.removeBullet,
+            onCompleteParams:[this.props.time],
             ease: Power1.easeInOut
           });
     }

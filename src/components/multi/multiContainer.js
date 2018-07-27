@@ -42,7 +42,7 @@ class multiContainer extends Component {
 
 
     componentDidUpdate(){
-
+        
     }
 
     componentWillUnmount() {
@@ -62,6 +62,12 @@ class multiContainer extends Component {
                 // this.setState({other:data[id]})
             }
         })
+    }
+
+
+    removeBullet=(bulletTime)=>{
+        let active = this.state.otherBullet.filter(e => e.time !== bulletTime)
+        this.setState({otherBullet: [...active]})
     }
 
 
@@ -86,10 +92,12 @@ class multiContainer extends Component {
     }
     updatePlayerFire=(data)=>{
         console.log(data)
-        let bullet=  this.otherProjectile(data.bullet.time, data.bullet.op);
+        let now = (new Date()).getTime();
+        let bullet= this.otherProjectile(data.bullet.time, data.bullet.op);
+        let active = this.state.otherBullet.filter(e => (now - e.time) < 6000 )
             
         console.log("bullets", bullet)
-        this.setState({otherBullet: [...this.state.otherBullet, bullet]});
+        this.setState({otherBullet: [...active, bullet]});
     }
 
 
@@ -160,6 +168,7 @@ class multiContainer extends Component {
         
     const now = (new Date()).getTime();
     let active = this.filterBullet(now)
+
 
     // console.log("self",this.state.self, "other",this.state.other);
     switch (event.key) {
@@ -237,10 +246,11 @@ class multiContainer extends Component {
         startAt={window.innerWidth - this.state.other.x} 
         collided ={this.collidedOther}
         item = {op}
+        removeBullet = {this.removeBullet}
         key={`bullet${now}`} 
         time={now}/>, 
         time:now,
-        item:"+"
+        item:op
         }        
     }
 
@@ -274,7 +284,7 @@ class multiContainer extends Component {
 
                 <div  className= "OtherPContainer" ref={c => this.otherPlayer = c}>
                     <OtherPlayer 
-                        op = {'+'}
+                        op = {'?'}
 
                         x={5} y={10}
                     />

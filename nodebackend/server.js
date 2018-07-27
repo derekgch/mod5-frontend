@@ -35,7 +35,6 @@ io.on('connection', (client) => {
     })
 
     client.on("FIRED", function(data){
-        const now = (new Date()).getTime();
         // console.log(now)
         players[client.id].bullet = data;
         
