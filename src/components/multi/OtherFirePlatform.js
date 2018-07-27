@@ -18,8 +18,11 @@ class FirePlatform extends Component {
     translatePosition = (pX, pY) => {
         let size = 100;
         let angle = 30/180*Math.PI
-        let nextP ={x: Math.floor(pX-size/2), y: Math.floor(pY+Math.cos(angle)*size)} 
-        let lastP = {x: Math.floor(pX+size/2), y: Math.floor(pY+Math.cos(angle)*size)}
+        // let nextP ={x: Math.floor(pX+size/2), y: Math.floor(pY+Math.cos(angle)*size)} 
+        // let lastP = {x: Math.floor(pX-size/2), y: Math.floor(pY+Math.cos(angle)*size)}
+        let nextP ={x: Math.floor(pX+size), y: pY};
+        let lastP ={x: Math.floor(pX+size/2), y:Math.floor(pY+Math.cos(angle)*size) } 
+
         return `M${pX} ${pY} L${nextP.x} ${nextP.y} L${lastP.x} ${lastP.y} Z`
     }
 
@@ -32,8 +35,8 @@ class FirePlatform extends Component {
             
             <svg width="110" height="110">
             <g>
-                <path d={testPath}  fill="#FF8A65" stroke="#95a5a6" strokeWidth="5" />
-                <text x={this.props.x-23} y={this.props.y+80} {...textStyle}>{operator}</text>
+                <path d={testPath}  fill="#888" stroke="#222" strokeWidth="5" />
+                <text x={this.props.x+27} y={this.props.y+55} {...textStyle}>{operator}</text>
             </g>
             </svg>
             

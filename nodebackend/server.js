@@ -27,6 +27,12 @@ io.on('connection', (client) => {
 
     io.emit("ALL_PLAYERS", players)
 
+    client.on("MOVED", function (data) {
+        // console.log(data)
+        players[client.id].x = data.x;
+        io.emit("PLAYER_MOVED", players[client.id] ) //client.broadcast exlucing self
+    })
+
 
     client.on('SEND_MESSAGE', function(data="server side testing"){
         client.emit('RECEIVE_MESSAGE', data+"sss");

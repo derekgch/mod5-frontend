@@ -24,7 +24,7 @@ class multiContainer extends Component {
         this.state={
             message:"sdssww",
             self: null,
-            players:null,
+            other:null,
         }
     }
 
@@ -32,26 +32,36 @@ class multiContainer extends Component {
     componentDidMount(){
 
         socket.on("ALL_PLAYERS", (data) => this.getPlayers(data));
+        socket.on("PLAYER_MOVED", data => this.updateOtherPlayer(data));
         document.addEventListener("keydown", this.handleKeyEvent);
+        this.togglePos(true, true);
     }
 
 
+    componentDidUpdate(){
 
+    }
 
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyEvent);
     }
 
+
+
+
     getPlayers=(data)=>{
         Object.keys(data).forEach( (id)  => {
             if (data[id].playerId === socket.id) {
                 console.log("sef", id);
-                
+                this.setState({self:data[id], other:data[id]})
             } else {
                 console.log("other",id);
+                // this.setState({other:data[id]})
             }
     })
-}
+    }
+
+
     
     handleClick=(event)=>{
         event.preventDefault();
@@ -64,8 +74,23 @@ class multiContainer extends Component {
     }
 
     setBasePosFn=()=>{
-        if(this.firePlatform)    
-            this.props.setBasePos('SET_BASE_POS', this.firePlatform.getBoundingClientRect().x)
+        if(this.firePlatform){    
+            let posX = this.firePlatform.getBoundingClientRect().x;
+            this.props.setBasePos('SET_BASE_POS', posX)
+            this.setState({self: {...this.state.self, x: posX}})
+            this.reportSelfPos(posX)
+        }
+    }
+
+    updateOtherPlayer=(data)=>{
+        if(data&& data.playerId ===this.state.other.playerId ){
+            this.setState({ other: data}, ()=>this.otherPlayerPos(data))
+        }
+    }
+    
+
+    reportSelfPos=(posX)=>{
+        socket.emit("MOVED", {playerId:this.state.self.playerId, x:posX})
     }
 
     togglePos=(left, start)=>{
@@ -84,6 +109,15 @@ class multiContainer extends Component {
       })              
    }
 
+   otherPlayerPos=(otherPlayer)=>{
+       let pos = window.innerWidth - otherPlayer.x-100;
+        TweenLite.to(this.otherPlayer, 2, {
+            x: pos,
+            repeat: -1,
+            ease: Sine
+      })   
+   }
+
    filterBullet=(now)=>{
     let active = this.props.fired
     if(this.props.fired.length > 0){
@@ -98,6 +132,7 @@ class multiContainer extends Component {
     const now = (new Date()).getTime();
     let active = this.filterBullet(now)
 
+    console.log("self",this.state.self, "other",this.state.other);
     switch (event.key) {
         case 'ArrowLeft':
             event.preventDefault();
@@ -121,14 +156,39 @@ class multiContainer extends Component {
 
         case ' ':
             if((now-this.props.lastFired) > 500){
-                // this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
+                this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
             }
             break;
     
         default:
             break;
+        }
     }
-}
+
+
+    collided = (bulletTime) =>{
+        if(!this.state.checkingAns){
+        let found = this.props.fired.find( e => e.time === bulletTime)
+        // this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
+
+        let active = this.props.fired.filter( e => e.time !== bulletTime)
+        this.props.updateFired("UPDATE_FIRE", active)
+        }
+    }
+
+    projectile=(now)=>{
+        return {data: <Bullet hit={false} 
+        position={{x:0, y:70}} 
+        qContainer = {this.otherPlayer}
+        startAt={this.props.basePos} 
+        collided ={this.collided}
+        item = {'+'}
+        key={UUID()} 
+        time={now}/>, 
+        time:now,
+        item:"+"
+        }
+    }
 
 
     render() {
@@ -139,18 +199,20 @@ class multiContainer extends Component {
                 {this.state.message}
                 <div  className= "fpContainer" ref={c => this.firePlatform = c}>
                     <FirePlatform x={55} y={10}
-                    setBasePos ={this.props.setBasePos}
-                    togglePos={this.togglePos}
-                    
+                    op = {'+'}                    
                     />
                 </div>
 
                 <div  className= "OtherPContainer" ref={c => this.otherPlayer = c}>
                     <OtherPlayer 
-                        x={55} y={10}
-                        setBasePos ={this.props.setBasePos}
+                        op = {'+'}
+
+                        x={5} y={10}
                     />
                 </div>
+
+                {this.props.fired.map(e => e.data)}
+
             </div>
         );
     }
