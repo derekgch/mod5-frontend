@@ -20,6 +20,7 @@ io.on('connection', (client) => {
         x: 100,
         hp: 100,
         name:"",
+        bullet:null,
         playerId: client.id,
     };
 
@@ -31,6 +32,14 @@ io.on('connection', (client) => {
         // console.log(data)
         players[client.id].x = data.x;
         io.emit("PLAYER_MOVED", players[client.id] ) //client.broadcast exlucing self
+    })
+
+    client.on("FIRED", function(data){
+        const now = (new Date()).getTime();
+        // console.log(now)
+        players[client.id].bullet = data;
+        
+        io.emit("PLAYER_FIRED", {playerid:client.id , bullet: data});
     })
 
 

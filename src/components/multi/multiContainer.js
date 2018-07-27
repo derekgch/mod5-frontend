@@ -7,16 +7,16 @@ import Bullet from '../Bullet'
 import { setLevel } from '../../actions';
 import HpBar from '../HpBar';
 import Adapter from '../../Adapter'
+import OtherBullet from './OtherBullet'
 
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
-import { simpleMath, multiplyMath, hardMath, calAnswer, ops , swapOP} from "../GenerateQuestions";
+import { hardMath, calAnswer, ops , swapOP} from "../GenerateQuestions";
 
 
 
 
 const  socket = openSocket('http://localhost:5000');
-
 
 class multiContainer extends Component {
     constructor(props) {
@@ -25,6 +25,8 @@ class multiContainer extends Component {
             message:"sdssww",
             self: null,
             other:null,
+            otherBullet:[],
+            opIndex: 0,
         }
     }
 
@@ -33,6 +35,7 @@ class multiContainer extends Component {
 
         socket.on("ALL_PLAYERS", (data) => this.getPlayers(data));
         socket.on("PLAYER_MOVED", data => this.updateOtherPlayer(data));
+        socket.on("PLAYER_FIRED", data => this.updatePlayerFire(data));
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
     }
@@ -58,7 +61,7 @@ class multiContainer extends Component {
                 console.log("other",id);
                 // this.setState({other:data[id]})
             }
-    })
+        })
     }
 
 
@@ -81,6 +84,14 @@ class multiContainer extends Component {
             this.reportSelfPos(posX)
         }
     }
+    updatePlayerFire=(data)=>{
+        console.log(data)
+        let bullet=  this.otherProjectile(data.bullet.time, data.bullet.op);
+            
+        console.log("bullets", bullet)
+        this.setState({otherBullet: [...this.state.otherBullet, bullet]});
+    }
+
 
     updateOtherPlayer=(data)=>{
         if(data&& data.playerId ===this.state.other.playerId ){
@@ -88,6 +99,9 @@ class multiContainer extends Component {
         }
     }
     
+    reportFireEvent=(time)=>{    
+        socket.emit("FIRED", {time, op:ops[this.state.opIndex]})
+    }
 
     reportSelfPos=(posX)=>{
         socket.emit("MOVED", {playerId:this.state.self.playerId, x:posX})
@@ -119,20 +133,35 @@ class multiContainer extends Component {
    }
 
    filterBullet=(now)=>{
-    let active = this.props.fired
-    if(this.props.fired.length > 0){
-        active = this.props.fired.filter( e => (now - e.time)< 6000)
-        this.props.updateFired("UPDATE_FIRE", active)
-   }
-   return active;
-   }
+        let active = this.props.fired
+        if(this.props.fired.length > 0){
+            active = this.props.fired.filter( e => (now - e.time)< 6000)
+            this.props.updateFired("UPDATE_FIRE", active)
+        }
+        return active;
+    }
+
+
+    cycleOp=(keyup, level=this.props.lvl) => {
+        let index = this.state.opIndex;
+            if(keyup){
+                index++;
+            }else{
+                index --;
+            }
+            if(index <0) index = 3
+            index = index%4
+             
+            this.setState({opIndex:index})
+       }
+
 
    handleKeyEvent=(event) => {
         
     const now = (new Date()).getTime();
     let active = this.filterBullet(now)
 
-    console.log("self",this.state.self, "other",this.state.other);
+    // console.log("self",this.state.self, "other",this.state.other);
     switch (event.key) {
         case 'ArrowLeft':
             event.preventDefault();
@@ -147,15 +176,22 @@ class multiContainer extends Component {
             break;
 
         case 'ArrowDown':
-            // this.cycleOp(false)
+            event.preventDefault();
+
+            this.cycleOp(false)
             break;
 
         case 'ArrowUp':
-            // this.cycleOp(true)
+            event.preventDefault();
+
+            this.cycleOp(true)
             break;
 
         case ' ':
+            event.preventDefault();
+
             if((now-this.props.lastFired) > 500){
+                this.reportFireEvent(now);
                 this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
             }
             break;
@@ -176,13 +212,46 @@ class multiContainer extends Component {
         }
     }
 
+
+    collidedOther=(bulletTime)=>{
+        if(!this.state.checkingAns){
+            let found = this.state.otherBullet.find( e => e.time === bulletTime)
+            // this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
+            let active = this.state.otherBullet.filter(e => e.time!== bulletTime)
+            this.setState({otherBullet: [...active]})
+            }
+    }
+
+
+    displayOtherBullet=()=>{
+                
+        return this.state.otherBullet.map(e => e.data);
+    }
+
+    otherProjectile=(now, op)=>{
+        console.log(now);
+
+        return {data: <OtherBullet hit={false}
+        position={{x:0, y:70}} 
+        qContainer = {this.firePlatform}
+        startAt={window.innerWidth - this.state.other.x} 
+        collided ={this.collidedOther}
+        item = {op}
+        key={`bullet${now}`} 
+        time={now}/>, 
+        time:now,
+        item:"+"
+        }        
+    }
+
     projectile=(now)=>{
+        
         return {data: <Bullet hit={false} 
         position={{x:0, y:70}} 
         qContainer = {this.otherPlayer}
         startAt={this.props.basePos} 
         collided ={this.collided}
-        item = {'+'}
+        item = {ops[this.state.opIndex]}
         key={UUID()} 
         time={now}/>, 
         time:now,
@@ -199,7 +268,7 @@ class multiContainer extends Component {
                 {this.state.message}
                 <div  className= "fpContainer" ref={c => this.firePlatform = c}>
                     <FirePlatform x={55} y={10}
-                    op = {'+'}                    
+                    op = {ops[this.state.opIndex]}                    
                     />
                 </div>
 
@@ -212,14 +281,12 @@ class multiContainer extends Component {
                 </div>
 
                 {this.props.fired.map(e => e.data)}
+                {this.displayOtherBullet()}
 
             </div>
         );
     }
 }
-
-
-
 
 
 function mapStateToProps(state){

@@ -11,7 +11,7 @@
   background-color: #222;
   height: 150px;
   padding: 20px;
-  color: white;
+  color: rgb(50, 31, 134);
 }
 
 .App-title {
@@ -51,6 +51,11 @@
 .bullet{
   position: absolute;  
   bottom: 10vw;
+}
+
+.otherBullet{
+  position: absolute;  
+  top: 10vw;
 
 }
 
