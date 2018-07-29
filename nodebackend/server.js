@@ -14,19 +14,33 @@ io = socket(server);
 
 io.on('connection', (client) => {
     console.log(client.id);
-
-
-    players[client.id] = {
+    const newPlayer = {
         x: 100,
         hp: 100,
         name:"",
         bullet:null,
-        playerId: client.id,
-    };
+        };
 
-    client.emit('NEW_PLAYER', players[client.id])
+    const emitPlayerSelf = function (){
+        client.emit("PLAYER_SELF",players[client.id] )
+    }
+
+    const emitGameOver = function(playerId){
+        players[client.id].hp =100;
+        players[client.id].bullet =null;
+        io.emit("GAME_OVER", {loser:playerId})
+    }
+        
+    players[client.id] = {...newPlayer, playerId: client.id};
+
+    // client.emit('NEW_PLAYER', players[client.id])
+    emitPlayerSelf();
 
     io.emit("ALL_PLAYERS", players)
+
+    client.on("UPDATE_NAME",data=>{
+        players[client.id].name = data.name
+    })
 
     client.on("MOVED", function (data) {
         // console.log(data)
@@ -41,10 +55,22 @@ io.on('connection', (client) => {
         io.emit("PLAYER_FIRED", {playerid:client.id , bullet: data});
     })
 
+    client.on('BULLET_HIT', data =>{
+        
+        players[data.otherPlayer].hp -= 20;
+        // console.log(players[data.otherPlayer].hp);
+        if(players[data.otherPlayer].hp < 1){
+            emitGameOver(data.otherPlayer)
+        }
+        io.emit("PLAYER_HIT", players[client.id] ) //client.broadcast exlucing self
+        emitPlayerSelf();
 
-    client.on('SEND_MESSAGE', function(data="server side testing"){
-        client.emit('RECEIVE_MESSAGE', data+"sss");
     })
+
+
+    // client.on('SEND_MESSAGE', function(data="server side testing"){
+    //     client.emit('RECEIVE_MESSAGE', data+"sss");
+    // })
 
 
 

@@ -78,6 +78,15 @@
   bottom: 1vw;
 }
 
+.otherHPbar{
+  position: relative;  
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: 1vw;
+}
+
 .wordListContianer{
   position: absolute;  
   margin-left: auto;
@@ -111,5 +120,14 @@
 
 .OtherPContainer{
   position: absolute;  
-  top: 5vw;
+  top: 10vw;
+}
+
+.waitingScreen{
+  position: absolute;  
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: 20vw;
 }

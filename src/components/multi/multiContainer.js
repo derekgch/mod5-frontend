@@ -6,12 +6,15 @@ import { connect } from 'react-redux'
 import Bullet from '../Bullet'
 import { setLevel } from '../../actions';
 import HpBar from '../HpBar';
+import OtherHpBar from './OtherHPBar';
+import StartScreen from './StartScreen'
+
 import Adapter from '../../Adapter'
 import OtherBullet from './OtherBullet'
 
 import UUID from 'uuid'
-import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
-import { hardMath, calAnswer, ops , swapOP} from "../GenerateQuestions";
+import { Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
+import { hardMath, calAnswer, ops } from "../GenerateQuestions";
 
 
 
@@ -22,11 +25,14 @@ class multiContainer extends Component {
     constructor(props) {
         super(props);
         this.state={
-            message:"sdssww",
             self: null,
             other:null,
             otherBullet:[],
             opIndex: 0,
+            question: [],
+            answer:null,
+            correntOP:null,
+            pause:true,
         }
     }
 
@@ -34,10 +40,15 @@ class multiContainer extends Component {
     componentDidMount(){
 
         socket.on("ALL_PLAYERS", (data) => this.getPlayers(data));
+        socket.on("PLAYER_SELF", data=>this.updateSelf(data))
         socket.on("PLAYER_MOVED", data => this.updateOtherPlayer(data));
         socket.on("PLAYER_FIRED", data => this.updatePlayerFire(data));
+        socket.on("PLAYER_HIT", data => this.updateOtherPlayer(data));
+        socket.on("GAME_OVER", data=> this.gameOver(data))
+
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
+        this.props.setLevel({digits: 1, box: 2, lvl: 2})
     }
 
 
@@ -49,13 +60,26 @@ class multiContainer extends Component {
         document.removeEventListener('keydown', this.handleKeyEvent);
     }
 
+    gameStart=()=>{
+        this.genNewEq(this.props)
+    }
+
+    gameOver=(data)=>{
+        if(data.loser !== socket.id){
+            console.log("WINNER!");
+            
+        }else{
+            console.log("LOSER!")
+        }
+    }
+
 
 
 
     getPlayers=(data)=>{
         Object.keys(data).forEach( (id)  => {
             if (data[id].playerId === socket.id) {
-                console.log("sef", id);
+                console.log("self", id);
                 this.setState({self:data[id], other:data[id]})
             } else {
                 console.log("other",id);
@@ -70,17 +94,18 @@ class multiContainer extends Component {
         this.setState({otherBullet: [...active]})
     }
 
-
-    
-    handleClick=(event)=>{
-        event.preventDefault();
-        socket.emit('SEND_MESSAGE', this.state.message )
-        socket.on("RECEIVE_MESSAGE", (data)=>{
-            this.setState({
-                message: data
-            })
-        })
+    genNewEq=({box, lvl, digits})=>{
+        let eq = [1, "+", 1];
+        let ans;
+        console.log("this.props.box", box)
+        if(lvl === 2){
+            eq = hardMath(digits, box);
+            ans = calAnswer(eq);
+            if(!Number.isInteger(ans)) ans = parseFloat( ans.toPrecision(4) );
+        }         
+        this.setState({question:eq, answer:ans})
     }
+
 
     setBasePosFn=()=>{
         if(this.firePlatform){    
@@ -90,8 +115,13 @@ class multiContainer extends Component {
             this.reportSelfPos(posX)
         }
     }
+
+    updateSelf(data){
+        this.setState({self: data})
+
+    }
+
     updatePlayerFire=(data)=>{
-        console.log(data)
         let now = (new Date()).getTime();
         let bullet= this.otherProjectile(data.bullet.time, data.bullet.op);
         let active = this.state.otherBullet.filter(e => (now - e.time) < 6000 )
@@ -105,6 +135,12 @@ class multiContainer extends Component {
         if(data&& data.playerId ===this.state.other.playerId ){
             this.setState({ other: data}, ()=>this.otherPlayerPos(data))
         }
+    }
+
+    reportPlayerHit=()=>{
+        console.log("self", this.state.self, "Other:",this.state.other)
+
+        socket.emit("BULLET_HIT", {otherPlayer: this.state.other.playerId})
     }
     
     reportFireEvent=(time)=>{    
@@ -163,8 +199,13 @@ class multiContainer extends Component {
             this.setState({opIndex:index})
        }
 
+    removeStartScreen=()=>{
+        this.state({pause: false}, this.genNewEq)
+    }
+
 
    handleKeyEvent=(event) => {
+       if(this.state.pause) return null;
         
     const now = (new Date()).getTime();
     let active = this.filterBullet(now)
@@ -215,7 +256,7 @@ class multiContainer extends Component {
         if(!this.state.checkingAns){
         let found = this.props.fired.find( e => e.time === bulletTime)
         // this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
-
+        this.reportPlayerHit();
         let active = this.props.fired.filter( e => e.time !== bulletTime)
         this.props.updateFired("UPDATE_FIRE", active)
         }
@@ -274,8 +315,7 @@ class multiContainer extends Component {
         // console.log(this.state)
         return (
             <div>
-                <button onClick={this.handleClick}>Click Me</button>
-                {this.state.message}
+
                 <div  className= "fpContainer" ref={c => this.firePlatform = c}>
                     <FirePlatform x={55} y={10}
                     op = {ops[this.state.opIndex]}                    
@@ -292,6 +332,11 @@ class multiContainer extends Component {
 
                 {this.props.fired.map(e => e.data)}
                 {this.displayOtherBullet()}
+                <HpBar   completed={this.state.self? this.state.self.hp:100}/>
+                <OtherHpBar   completed={this.state.other? this.state.other.hp:100}/>
+
+                <StartScreen waiting={this.state.pause} removeThis={this.removeStartScreen}/>
+
 
             </div>
         );
