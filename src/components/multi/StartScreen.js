@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import { Power1, TweenLite, Sine} from "gsap/TweenMax";
+import Button from '@material-ui/core/Button';
+
+
 
 const textStyle = {
     fontFamily: "COURIER",
@@ -15,48 +19,93 @@ const textStyle = {
 class StartScreen extends Component {
     state={
         count:3,
+        ready:false,
     }
 
-    componentDidMount(){
-        this.countInterval = setInterval(this.countDown, 999)
-    }
+
     componentWillUnmount(){
+        this.clearIntervalFn();
+    }
+
+    clearIntervalFn=()=>{
         clearInterval(this.countInterval);
     }
 
     shouldComponentUpdate(nextProps, nextState){
         if(nextProps.waiting !== this.props.waiting
-        ||nextState.count !== this.state.count){
+        ||nextState.count !== this.state.count
+        ||nextState.ready !== this.state.ready){
             return true;
         }
         return false;
     }
     
     countDown=()=>{
+        // console.log("wwht")
         if(this.state.count > 0 && !this.props.waiting)
             this.setState({count: this.state.count-1})
         
         if(this.state.count < 1){
-            this.props.removeThis();
+            this.clearIntervalFn();
+            this.moveOutOfScreen();
+            setTimeout(this.props.gameStart, 3000)
+        }
+    }
+
+
+    handleClick=()=>{
+        
+        this.setState({ready:true});
+        this.props.getReady();
+        // this.countInterval = setInterval(this.countDown, 999)
+    }
+
+    moveOutOfScreen=()=>{
+        TweenLite.to(this.container, 3, {
+            x: window.innerWidth + 100,
+            ease: Sine,
+            onComplete: this.clearIntervalFn,
+            onCompleteParams: [],
+        } )
+    }
+
+
+    toDisplay=()=>{
+        if(this.state.ready){
+            if(this.props.waiting){
+              return (<text style={textStyle} x={300} y={110} alignmentBaseline="middle" textAnchor="middle"
+                            >{`Waiting for other player...`} </text> )
+
+            }else{
+                if(this.state.count === 0) {
+                    return (<text style={numberStyle} x={300} y={110} alignmentBaseline="middle" textAnchor="middle"
+                    >{`Start!`} </text> )
+                }
+
+
+                return (<text style={numberStyle} x={300} y={110} alignmentBaseline="middle" textAnchor="middle"
+                            >{this.state.count}</text>)
+            }
+        }else{
+            return null;
         }
     }
 
     render() {
-        let toDisplay = this.props.waiting 
-        ? 
-        <text style={textStyle} x={300} y={110} alignment-baseline="middle" text-anchor="middle"
-        >{`Waiting for other player...`} </text> 
 
-        : <text style={numberStyle} x={300} y={110} alignment-baseline="middle" text-anchor="middle"
-        >{this.state.count}</text>
+        let displayButton = this.state.ready? null 
+            : <Button onClick={this.handleClick} style={{fontSize:30, fontFamily: "COURIER"}}>READY!</Button>
 
-        if(this.state.count === 0) {toDisplay = <text style={numberStyle} x={300} y={110} alignment-baseline="middle" text-anchor="middle"
-        >{`Start!`} </text> }
+        // console.log("ss", displayButton);
+        
         return (
-            <div className="waitingScreen">
+            <div className="waitingScreen" ref={c => this.container = c}>
                 <svg width="600">
-                    {toDisplay}
+                    {this.toDisplay()}
                 </svg>
+                <div>
+                    {displayButton}
+                </div>
             </div>
         );
     }

@@ -9,6 +9,8 @@ import HpBar from '../HpBar';
 import OtherHpBar from './OtherHPBar';
 import StartScreen from './StartScreen'
 import Question from './MultiQuestion'
+import EndingScreen from './EndingScreen'
+
 
 import Adapter from '../../Adapter'
 import OtherBullet from './OtherBullet'
@@ -35,6 +37,8 @@ class multiContainer extends Component {
             answer:null,
             correntOP:null,
             pause:false,
+            started: false,
+            winner:false,
         }
     }
 
@@ -47,18 +51,14 @@ class multiContainer extends Component {
         socket.on("PLAYER_FIRED", data => this.updatePlayerFire(data));
         socket.on("PLAYER_HIT", data => this.getPlayers(data));
         socket.on("NEW_QUESTIONS", data => this.updateQuestion(data));
-
+        socket.on("START_GAME",(data) => this.setState({started:data}) )
         socket.on("GAME_OVER", data=> this.gameOver(data))
 
-        this.gameStart();
+        this.reportQuestion()        
+        // this.gameStart();
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
         this.props.setLevel({digits: 1, box: 2, lvl: 2})
-    }
-
-
-    componentDidUpdate(){
-        
     }
 
     componentWillUnmount() {
@@ -66,20 +66,22 @@ class multiContainer extends Component {
     }
 
     gameStart=()=>{
-        this.reportQuestion()
+        console.log("ssssss")
+        // this.reportQuestion()
+        // this.setState({gameStart:true})
     }
+
+
 
     gameOver=(data)=>{
         if(data.loser !== socket.id){
             console.log("WINNER!");
-            
+            this.setState({winner:true, pause: true})
         }else{
             console.log("LOSER!")
+            this.setState({winner:false, pause: true})
         }
     }
-
-
-
 
     getPlayers=(data)=>{
         Object.keys(data).forEach( (id)  => {
@@ -100,13 +102,8 @@ class multiContainer extends Component {
     }
 
     genNewEq=(box=2, digits= 1)=>{
-        let eq = [1, "+", 1];
-        let ans;
-        console.log("this.props.box", box)
-        
+        let eq = [1, "+", 1];        
         eq = hardMath(digits, box);
-  
-                 
         // this.setState({question:eq, answer:ans})
         return eq;
     }
@@ -122,6 +119,8 @@ class multiContainer extends Component {
     }
 
     updateQuestion=(data)=>{
+        console.log(data);
+        
         let ans = calAnswer(data);
         if(!Number.isInteger(ans)) ans = parseFloat( ans.toPrecision(4) );
         this.setState({question:data, answer:ans})
@@ -144,9 +143,13 @@ class multiContainer extends Component {
 
     updateOtherPlayer=(data)=>{
         if(data && this.state.other && data.playerId ===this.state.other.playerId ){
-            console.log("updateother", data)
+            // console.log("updateother", data)
             this.setState({ other: data}, ()=>this.otherPlayerPos(data))
         }
+    }
+
+    reportUserReady=()=>{
+        socket.emit("USER_READY", socket.id)
     }
 
     reportQuestion=()=>{
@@ -154,7 +157,7 @@ class multiContainer extends Component {
     }
 
     reportPlayerHit=(op)=>{
-        console.log("self", this.state.self, "Other:",this.state.other)
+        // console.log("self", this.state.self, "Other:",this.state.other)
 
         socket.emit("BULLET_HIT", {otherPlayer: this.state.other.playerId, op})
     }
@@ -165,6 +168,10 @@ class multiContainer extends Component {
 
     reportSelfPos=(posX)=>{
         socket.emit("MOVED", {playerId:this.state.self.playerId, x:posX})
+    }
+
+    reportReady=()=>{
+        socket.emit("USER_READY", socket.id);
     }
 
     togglePos=(left, start)=>{
@@ -222,13 +229,9 @@ class multiContainer extends Component {
 
    handleKeyEvent=(event) => {
     if(this.state.pause) return null;
-        
-    
-    // console.log(this.state.question);
-    
+            
     const now = (new Date()).getTime();
-    let active = this.filterBullet(now)
-
+    let active = this.filterBullet(now);
 
     // console.log("self",this.state.self, "other",this.state.other);
     switch (event.key) {
@@ -276,7 +279,6 @@ class multiContainer extends Component {
         let found = this.props.fired.find( e => e.time === bulletTime)
         // this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
         this.reportPlayerHit(op);
-        console.log(op);
         
         let active = this.props.fired.filter( e => e.time !== bulletTime)
         this.props.updateFired("UPDATE_FIRE", active)
@@ -300,7 +302,6 @@ class multiContainer extends Component {
     }
 
     otherProjectile=(now, op)=>{
-        // console.log(op);
 
         return {data: <OtherBullet hit={false}
         position={{x:0, y:70}} 
@@ -331,6 +332,21 @@ class multiContainer extends Component {
         }
     }
 
+    startOrGameOver=()=>{
+        if(this.state.started){
+            if(this.state.pause){
+                return <EndingScreen key={`endingScreen`} winner={this.state.winner}/>
+            }else{
+                return <div className="multiPlayerQContainer" key={`multiPlayerQContainer`}> <Question eq={this.state.question} ans={this.state.answer} filled ={[]}/> </div>;
+            }
+        }
+        // return <EndingScreen winner={this.state.winner}/>
+        return <StartScreen key={`StartScreen`} 
+            waiting={!this.state.started} 
+            gameStart={this.gameStart}
+            getReady={this.reportReady}/>
+    }
+
 
     render() {
         // console.log(this.state)
@@ -349,17 +365,14 @@ class multiContainer extends Component {
                         x={5} y={10}
                     />
                 </div>
-
               
                 {this.props.fired.map(e => e.data)}
                 {this.displayOtherBullet()}
                 <HpBar   completed={this.state.self? this.state.self.hp:100}/>
                 <OtherHpBar   completed={this.state.other? this.state.other.hp:100}/>
 
-                {this.state.pause? <StartScreen waiting={this.state.pause} removeThis={this.removeStartScreen}/>: null}
-                {this.state.question.length > 0 
-                ? <div className="multiPlayerQContainer"> <Question eq={this.state.question} ans={this.state.answer} filled ={[]}/> </div>
-                : null}
+                {this.startOrGameOver()}
+           
 
             </div>
         );

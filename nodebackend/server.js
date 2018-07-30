@@ -20,7 +20,7 @@ let lastestClientTimeStamp = (new Date()).getTime();
 let lastestClient = null;
 let equation = [];
 let currentOp ="";
-
+let gameStart = false;
 io = socket(server);
 
 io.on('connection', (client) => {
@@ -45,7 +45,8 @@ io.on('connection', (client) => {
         x: 100,
         hp: 100,
         name:"",
-        bullet:null,
+        bullet: null,
+        ready: false,
         playerId: client.id };
 
     // client.emit('NEW_PLAYER', players[client.id])
@@ -53,16 +54,34 @@ io.on('connection', (client) => {
 
     io.emit("ALL_PLAYERS", players)
 
+    client.on("USER_READY", id=>{
+        console.log(id);
+        
+        let allUserReady = true;
+        
+        players[id].ready= true;
+        Object.keys(players).forEach( (id)  => {
+            if (players[id].ready === false) {
+                allUserReady = false;
+            }
+        })
+
+        if(allUserReady){
+            gameStart = true;
+
+        }
+        io.emit("START_GAME", gameStart)
+    })
+
     client.on("GET_QUESTIONS", data => {
         if(client.id === lastestClient){
             equation = data;
             currentOp = data[1];
+            io.emit("NEW_QUESTIONS", equation);
         }
-        // console.log(data, equation);
-        // console.log(lastestClient, client.id);
-
+        console.log(data, equation);
+        console.log(lastestClient, client.id);
         
-        io.emit("NEW_QUESTIONS", equation)
     })
 
     client.on("UPDATE_NAME",data=>{
@@ -96,9 +115,7 @@ io.on('connection', (client) => {
     })
 
 
-    // client.on('SEND_MESSAGE', function(data="server side testing"){
-    //     client.emit('RECEIVE_MESSAGE', data+"sss");
-    // })
+
 
 
 

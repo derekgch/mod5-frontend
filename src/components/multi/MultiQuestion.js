@@ -58,7 +58,7 @@ class MultiQuestion extends Component {
                     if(operator === "/") operator ="÷"
                     return <text x={startPoint} y="95" {...textStyle} key={now-i} >{operator}</text>                    
                 }else{
-                    console.log(i)
+                    // console.log(i)
                     
                     if(i === 2)
                         return <BlankBoxWithQuestion key={now-i} start={startPoint+15} />
