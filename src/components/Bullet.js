@@ -32,7 +32,7 @@ class Bullet extends React.Component {
             let qRect = this.props.qContainer.getBoundingClientRect();
             let bRect = this.refs.bullet.getBoundingClientRect();
             if(this.collisionDetetion(qRect, bRect)){
-                this.props.collided(this.props.time)
+                this.props.collided(this.props.time, this.props.item)
             }
         }
     }

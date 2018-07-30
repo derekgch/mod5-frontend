@@ -24,8 +24,9 @@ class StartScreen extends Component {
         clearInterval(this.countInterval);
     }
 
-    shouldComponentUpdate(nextProps){
-        if(nextProps.waiting !== this.props.waiting){
+    shouldComponentUpdate(nextProps, nextState){
+        if(nextProps.waiting !== this.props.waiting
+        ||nextState.count !== this.state.count){
             return true;
         }
         return false;
@@ -41,13 +42,16 @@ class StartScreen extends Component {
     }
 
     render() {
-        const toDisplay = this.props.waiting 
+        let toDisplay = this.props.waiting 
         ? 
         <text style={textStyle} x={300} y={110} alignment-baseline="middle" text-anchor="middle"
         >{`Waiting for other player...`} </text> 
 
-        : <text style={numberStyle} y={110} alignment-baseline="middle" text-anchor="middle"
+        : <text style={numberStyle} x={300} y={110} alignment-baseline="middle" text-anchor="middle"
         >{this.state.count}</text>
+
+        if(this.state.count === 0) {toDisplay = <text style={numberStyle} x={300} y={110} alignment-baseline="middle" text-anchor="middle"
+        >{`Start!`} </text> }
         return (
             <div className="waitingScreen">
                 <svg width="600">

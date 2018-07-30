@@ -7,6 +7,7 @@ var socket = require('socket.io');
 var app = express();
 
 
+
 server = app.listen(5000, function(){
     console.log('server is running on port 5000')
 });
@@ -15,16 +16,20 @@ server = app.listen(5000, function(){
 
 let players ={};
 
+let lastestClientTimeStamp = (new Date()).getTime();
+let lastestClient = null;
+let equation = [];
+let currentOp ="";
+
 io = socket(server);
 
 io.on('connection', (client) => {
-    console.log(client.id);
-    const newPlayer = {
-        x: 100,
-        hp: 100,
-        name:"",
-        bullet:null,
-        };
+    if(lastestClientTimeStamp < client.handshake.issued ){
+        lastestClientTimeStamp = client.handshake.issued
+        lastestClient = client.id
+    }
+
+    console.log(client.handshake.issued);
 
     const emitPlayerSelf = function (){
         client.emit("PLAYER_SELF",players[client.id] )
@@ -36,12 +41,29 @@ io.on('connection', (client) => {
         io.emit("GAME_OVER", {loser:playerId})
     }
         
-    players[client.id] = {...newPlayer, playerId: client.id};
+    players[client.id] = {      
+        x: 100,
+        hp: 100,
+        name:"",
+        bullet:null,
+        playerId: client.id };
 
     // client.emit('NEW_PLAYER', players[client.id])
     emitPlayerSelf();
 
     io.emit("ALL_PLAYERS", players)
+
+    client.on("GET_QUESTIONS", data => {
+        if(client.id === lastestClient){
+            equation = data;
+            currentOp = data[1];
+        }
+        // console.log(data, equation);
+        // console.log(lastestClient, client.id);
+
+        
+        io.emit("NEW_QUESTIONS", equation)
+    })
 
     client.on("UPDATE_NAME",data=>{
         players[client.id].name = data.name
@@ -50,25 +72,26 @@ io.on('connection', (client) => {
     client.on("MOVED", function (data) {
         // console.log(data)
         players[client.id].x = data.x;
-        io.emit("PLAYER_MOVED", players[client.id] ) //client.broadcast exlucing self
+        client.broadcast.emit("PLAYER_MOVED", players[client.id] ) //client.broadcast exlucing self
     })
 
     client.on("FIRED", function(data){
         // console.log(now)
         players[client.id].bullet = data;
         
-        io.emit("PLAYER_FIRED", {playerid:client.id , bullet: data});
+        client.broadcast.emit("PLAYER_FIRED", {playerid:client.id , bullet: data});
     })
 
     client.on('BULLET_HIT', data =>{
-        
-        players[data.otherPlayer].hp -= 20;
-        // console.log(players[data.otherPlayer].hp);
+        if(data.op === currentOp){
+            players[data.otherPlayer].hp -= 20;
+        }
+        // console.log(data.op, currentOp);
         if(players[data.otherPlayer].hp < 1){
             emitGameOver(data.otherPlayer)
         }
-        io.emit("PLAYER_HIT", players[client.id] ) //client.broadcast exlucing self
-        emitPlayerSelf();
+        io.emit("PLAYER_HIT", players ) //client.broadcast exlucing self
+        // emitPlayerSelf();
 
     })
 

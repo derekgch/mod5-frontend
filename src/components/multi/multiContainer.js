@@ -8,6 +8,7 @@ import { setLevel } from '../../actions';
 import HpBar from '../HpBar';
 import OtherHpBar from './OtherHPBar';
 import StartScreen from './StartScreen'
+import Question from './MultiQuestion'
 
 import Adapter from '../../Adapter'
 import OtherBullet from './OtherBullet'
@@ -22,6 +23,7 @@ import { hardMath, calAnswer, ops } from "../GenerateQuestions";
 const  socket = openSocket('http://localhost:5000');
 
 class multiContainer extends Component {
+
     constructor(props) {
         super(props);
         this.state={
@@ -32,7 +34,7 @@ class multiContainer extends Component {
             question: [],
             answer:null,
             correntOP:null,
-            pause:true,
+            pause:false,
         }
     }
 
@@ -43,9 +45,12 @@ class multiContainer extends Component {
         socket.on("PLAYER_SELF", data=>this.updateSelf(data))
         socket.on("PLAYER_MOVED", data => this.updateOtherPlayer(data));
         socket.on("PLAYER_FIRED", data => this.updatePlayerFire(data));
-        socket.on("PLAYER_HIT", data => this.updateOtherPlayer(data));
+        socket.on("PLAYER_HIT", data => this.getPlayers(data));
+        socket.on("NEW_QUESTIONS", data => this.updateQuestion(data));
+
         socket.on("GAME_OVER", data=> this.gameOver(data))
 
+        this.gameStart();
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
         this.props.setLevel({digits: 1, box: 2, lvl: 2})
@@ -61,7 +66,7 @@ class multiContainer extends Component {
     }
 
     gameStart=()=>{
-        this.genNewEq(this.props)
+        this.reportQuestion()
     }
 
     gameOver=(data)=>{
@@ -80,10 +85,10 @@ class multiContainer extends Component {
         Object.keys(data).forEach( (id)  => {
             if (data[id].playerId === socket.id) {
                 console.log("self", id);
-                this.setState({self:data[id], other:data[id]})
+                this.setState({self:data[id]})
             } else {
                 console.log("other",id);
-                // this.setState({other:data[id]})
+                this.setState({other:data[id]})
             }
         })
     }
@@ -94,29 +99,35 @@ class multiContainer extends Component {
         this.setState({otherBullet: [...active]})
     }
 
-    genNewEq=({box, lvl, digits})=>{
+    genNewEq=(box=2, digits= 1)=>{
         let eq = [1, "+", 1];
         let ans;
         console.log("this.props.box", box)
-        if(lvl === 2){
-            eq = hardMath(digits, box);
-            ans = calAnswer(eq);
-            if(!Number.isInteger(ans)) ans = parseFloat( ans.toPrecision(4) );
-        }         
-        this.setState({question:eq, answer:ans})
+        
+        eq = hardMath(digits, box);
+  
+                 
+        // this.setState({question:eq, answer:ans})
+        return eq;
     }
 
 
     setBasePosFn=()=>{
         if(this.firePlatform){    
-            let posX = this.firePlatform.getBoundingClientRect().x;
+            let posX = this.firePlatform.getBoundingClientRect().x*100 / window.innerWidth;
             this.props.setBasePos('SET_BASE_POS', posX)
             this.setState({self: {...this.state.self, x: posX}})
             this.reportSelfPos(posX)
         }
     }
 
-    updateSelf(data){
+    updateQuestion=(data)=>{
+        let ans = calAnswer(data);
+        if(!Number.isInteger(ans)) ans = parseFloat( ans.toPrecision(4) );
+        this.setState({question:data, answer:ans})
+    }
+
+    updateSelf=(data)=>{
         this.setState({self: data})
 
     }
@@ -132,15 +143,20 @@ class multiContainer extends Component {
 
 
     updateOtherPlayer=(data)=>{
-        if(data&& data.playerId ===this.state.other.playerId ){
+        if(data && this.state.other && data.playerId ===this.state.other.playerId ){
+            console.log("updateother", data)
             this.setState({ other: data}, ()=>this.otherPlayerPos(data))
         }
     }
 
-    reportPlayerHit=()=>{
+    reportQuestion=()=>{
+        socket.emit("GET_QUESTIONS", this.genNewEq())
+    }
+
+    reportPlayerHit=(op)=>{
         console.log("self", this.state.self, "Other:",this.state.other)
 
-        socket.emit("BULLET_HIT", {otherPlayer: this.state.other.playerId})
+        socket.emit("BULLET_HIT", {otherPlayer: this.state.other.playerId, op})
     }
     
     reportFireEvent=(time)=>{    
@@ -153,7 +169,7 @@ class multiContainer extends Component {
 
     togglePos=(left, start)=>{
         let amt = 200,
-            pos = this.props.basePos;
+            pos = this.props.basePos * window.innerWidth / 100;
         if(left) pos -= amt;
         else pos += amt;
         if(pos> window.innerWidth-100) pos = window.innerWidth-100;
@@ -168,7 +184,7 @@ class multiContainer extends Component {
    }
 
    otherPlayerPos=(otherPlayer)=>{
-       let pos = window.innerWidth - otherPlayer.x-100;
+       let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -100;
         TweenLite.to(this.otherPlayer, 2, {
             x: pos,
             repeat: -1,
@@ -200,13 +216,16 @@ class multiContainer extends Component {
        }
 
     removeStartScreen=()=>{
-        this.state({pause: false}, this.genNewEq)
+        this.setState({pause: false})
     }
 
 
    handleKeyEvent=(event) => {
-       if(this.state.pause) return null;
+    if(this.state.pause) return null;
         
+    
+    // console.log(this.state.question);
+    
     const now = (new Date()).getTime();
     let active = this.filterBullet(now)
 
@@ -252,11 +271,13 @@ class multiContainer extends Component {
     }
 
 
-    collided = (bulletTime) =>{
+    collided = (bulletTime, op) =>{
         if(!this.state.checkingAns){
         let found = this.props.fired.find( e => e.time === bulletTime)
         // this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
-        this.reportPlayerHit();
+        this.reportPlayerHit(op);
+        console.log(op);
+        
         let active = this.props.fired.filter( e => e.time !== bulletTime)
         this.props.updateFired("UPDATE_FIRE", active)
         }
@@ -279,16 +300,16 @@ class multiContainer extends Component {
     }
 
     otherProjectile=(now, op)=>{
-        console.log(now);
+        // console.log(op);
 
         return {data: <OtherBullet hit={false}
         position={{x:0, y:70}} 
         qContainer = {this.firePlatform}
-        startAt={window.innerWidth - this.state.other.x} 
+        startAt={window.innerWidth - 70 - this.state.other.x* window.innerWidth / 100} 
         collided ={this.collidedOther}
         item = {op}
         removeBullet = {this.removeBullet}
-        key={`bullet${now}`} 
+        key={`bullet${now}`}   
         time={now}/>, 
         time:now,
         item:op
@@ -300,7 +321,7 @@ class multiContainer extends Component {
         return {data: <Bullet hit={false} 
         position={{x:0, y:70}} 
         qContainer = {this.otherPlayer}
-        startAt={this.props.basePos} 
+        startAt={this.props.basePos * window.innerWidth / 100 +20} 
         collided ={this.collided}
         item = {ops[this.state.opIndex]}
         key={UUID()} 
@@ -325,18 +346,20 @@ class multiContainer extends Component {
                 <div  className= "OtherPContainer" ref={c => this.otherPlayer = c}>
                     <OtherPlayer 
                         op = {'?'}
-
                         x={5} y={10}
                     />
                 </div>
 
+              
                 {this.props.fired.map(e => e.data)}
                 {this.displayOtherBullet()}
                 <HpBar   completed={this.state.self? this.state.self.hp:100}/>
                 <OtherHpBar   completed={this.state.other? this.state.other.hp:100}/>
 
-                <StartScreen waiting={this.state.pause} removeThis={this.removeStartScreen}/>
-
+                {this.state.pause? <StartScreen waiting={this.state.pause} removeThis={this.removeStartScreen}/>: null}
+                {this.state.question.length > 0 
+                ? <div className="multiPlayerQContainer"> <Question eq={this.state.question} ans={this.state.answer} filled ={[]}/> </div>
+                : null}
 
             </div>
         );
@@ -356,6 +379,7 @@ function mapStateToProps(state){
         score: state.score,
     }
 }
+
 
 function mapDispathToProps(dispatch){
     return {
