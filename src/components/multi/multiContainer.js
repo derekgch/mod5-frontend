@@ -87,6 +87,21 @@ class multiContainer extends Component {
         }
     }
 
+    resetGame=()=>{
+        this.setState({ started:false, 
+                        pause:false,
+                        winner: null,
+                        otherBullet:[],
+                        opIndex: 0,
+                        question: [],
+                        answer:null,
+                        correntOP:null,
+                    })
+
+        
+    }
+
+
     getPlayers=(data)=>{
         Object.keys(data).forEach( (id)  => {
             if (data[id].playerId === socket.id) {
@@ -335,7 +350,7 @@ class multiContainer extends Component {
             return <div className="multiPlayerQContainer" key={`multiPlayerQContainer`}> <Question eq={this.state.question} ans={this.state.answer} filled ={[]}/> </div>;
             
         }else if(this.state.winner !== null){
-            return <EndingScreen key={`endingScreen`} winner={this.state.winner}/>
+            return <EndingScreen key={`endingScreen`} winner={this.state.winner} resetGame={this.resetGame}/>
         }
         // return <EndingScreen winner={this.state.winner}/>
         return <StartScreen key={`StartScreen`} 

@@ -11,10 +11,10 @@ const textStyle = {
 class EndingScreen extends Component {
 
     handleClick=()=>{
-
+        this.props.resetGame()
     }
 
-    
+
     render() {
         const toDisplay = this.props.winner ? "You Won!" : "You Lost!"
         return (

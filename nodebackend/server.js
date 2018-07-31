@@ -21,6 +21,20 @@ let lastestClient = null;
 let equation = [];
 let currentOp ="";
 let gameStart = false;
+
+
+const resetGame = () =>{
+    gameStart= false;
+    Object.keys(players).forEach( (id)  => {
+        players[id].ready = false;
+        players[id].bullet = null;
+        players[id].hp = 100;
+    })
+}
+
+
+
+
 io = socket(server);
 
 io.on('connection', (client) => {
@@ -29,7 +43,7 @@ io.on('connection', (client) => {
         lastestClient = client.id
     }
 
-    console.log(client.handshake.issued);
+    console.log("user connected",client.id, client.handshake.issued);
 
     const emitPlayerSelf = function (){
         client.emit("PLAYER_SELF",players[client.id] )
@@ -38,7 +52,8 @@ io.on('connection', (client) => {
     const emitGameOver = function(playerId){
         players[client.id].hp =100;
         players[client.id].bullet =null;
-        io.emit("GAME_OVER", {loser:playerId})
+        io.emit("GAME_OVER", {loser:playerId});
+        resetGame();
     }
         
     players[client.id] = {      
@@ -102,7 +117,7 @@ io.on('connection', (client) => {
     })
 
     client.on('BULLET_HIT', data =>{
-        if(data.op === currentOp){
+        if(gameStart && data.op === currentOp){
             players[data.otherPlayer].hp -= 20;
         }
         // console.log(data.op, currentOp);
@@ -120,13 +135,10 @@ io.on('connection', (client) => {
 
 
     client.on('disconnect', function () {
-        gameStart= false;
-        Object.keys(players).forEach( (id)  => {
-            players[id].ready = false;
-            players[id].bullet = null;
-            players[id].hp = 100;
-        })
+
         console.log('user disconnected');
+
+        resetGame(); //reset game
         // remove this player from our players object
         delete players[client.id];
         // emit a message to all players to remove this player
