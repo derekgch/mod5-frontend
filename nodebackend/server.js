@@ -57,7 +57,7 @@ io.on('connection', (client) => {
     }
         
     players[client.id] = {      
-        x: 100,
+        x: 61,
         hp: 100,
         name:"",
         bullet: null,
@@ -84,9 +84,10 @@ io.on('connection', (client) => {
             }
         })
 
-        if(allUserReady){
+        if(allUserReady && Object.keys(players).length == 2){
             gameStart = true;
-
+            console.log("GAMESTARTED");
+            
         }
         io.emit("START_GAME", gameStart)
     })
@@ -133,6 +134,12 @@ io.on('connection', (client) => {
 
     })
 
+    client.on("UNMOUNT", ()=>{
+        console.log("unmount event");
+        
+        emitGameOver(client.id)
+    })
+
 
 
 
@@ -141,8 +148,8 @@ io.on('connection', (client) => {
     client.on('disconnect', function () {
 
         console.log('user disconnected');
-
-        resetGame(); //reset game
+        gameStart=false;
+        // resetGame(); //reset game
         // remove this player from our players object
         delete players[client.id];
         // emit a message to all players to remove this player
