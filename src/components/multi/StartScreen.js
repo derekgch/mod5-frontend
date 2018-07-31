@@ -41,14 +41,14 @@ class StartScreen extends Component {
     }
     
     countDown=()=>{
-        // console.log("wwht")
+        console.log("wwht")
         if(this.state.count > 0 && !this.props.waiting)
             this.setState({count: this.state.count-1})
         
         if(this.state.count < 1){
             this.clearIntervalFn();
             this.moveOutOfScreen();
-            setTimeout(this.props.gameStart, 3000)
+            setTimeout(this.props.runGame, 2500)
         }
     }
 
@@ -57,7 +57,7 @@ class StartScreen extends Component {
         
         this.setState({ready:true});
         this.props.getReady();
-        // this.countInterval = setInterval(this.countDown, 999)
+        this.countInterval = setInterval(this.countDown, 999)
     }
 
     moveOutOfScreen=()=>{

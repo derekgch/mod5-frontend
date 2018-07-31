@@ -38,7 +38,7 @@ class multiContainer extends Component {
             correntOP:null,
             pause:false,
             started: false,
-            winner:false,
+            winner:null,
         }
     }
 
@@ -51,11 +51,10 @@ class multiContainer extends Component {
         socket.on("PLAYER_FIRED", data => this.updatePlayerFire(data));
         socket.on("PLAYER_HIT", data => this.getPlayers(data));
         socket.on("NEW_QUESTIONS", data => this.updateQuestion(data));
-        socket.on("START_GAME",(data) => this.setState({started:data}) )
+        socket.on("START_GAME",(data) =>  this.initGame(data))
         socket.on("GAME_OVER", data=> this.gameOver(data))
 
-        this.reportQuestion()        
-        // this.gameStart();
+        // this.reportQuestion()        
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
         this.props.setLevel({digits: 1, box: 2, lvl: 2})
@@ -65,10 +64,15 @@ class multiContainer extends Component {
         document.removeEventListener('keydown', this.handleKeyEvent);
     }
 
-    gameStart=()=>{
-        console.log("ssssss")
-        // this.reportQuestion()
-        // this.setState({gameStart:true})
+
+    initGame(data){
+        this.reportQuestion()
+        this.setState({started:data, pause:true})
+    }
+    runGame=()=>{
+        if(this.state.started){
+            this.setState({pause:false})
+        }
     }
 
 
@@ -104,7 +108,6 @@ class multiContainer extends Component {
     genNewEq=(box=2, digits= 1)=>{
         let eq = [1, "+", 1];        
         eq = hardMath(digits, box);
-        // this.setState({question:eq, answer:ans})
         return eq;
     }
 
@@ -157,7 +160,6 @@ class multiContainer extends Component {
     }
 
     reportPlayerHit=(op)=>{
-        // console.log("self", this.state.self, "Other:",this.state.other)
 
         socket.emit("BULLET_HIT", {otherPlayer: this.state.other.playerId, op})
     }
@@ -220,10 +222,6 @@ class multiContainer extends Component {
             index = index%4
              
             this.setState({opIndex:index})
-       }
-
-    removeStartScreen=()=>{
-        this.setState({pause: false})
     }
 
 
@@ -333,17 +331,16 @@ class multiContainer extends Component {
     }
 
     startOrGameOver=()=>{
-        if(this.state.started){
-            if(this.state.pause){
-                return <EndingScreen key={`endingScreen`} winner={this.state.winner}/>
-            }else{
-                return <div className="multiPlayerQContainer" key={`multiPlayerQContainer`}> <Question eq={this.state.question} ans={this.state.answer} filled ={[]}/> </div>;
-            }
+        if(this.state.started && !this.state.pause){  
+            return <div className="multiPlayerQContainer" key={`multiPlayerQContainer`}> <Question eq={this.state.question} ans={this.state.answer} filled ={[]}/> </div>;
+            
+        }else if(this.state.winner !== null){
+            return <EndingScreen key={`endingScreen`} winner={this.state.winner}/>
         }
         // return <EndingScreen winner={this.state.winner}/>
         return <StartScreen key={`StartScreen`} 
             waiting={!this.state.started} 
-            gameStart={this.gameStart}
+            runGame={this.runGame}
             getReady={this.reportReady}/>
     }
 

@@ -120,6 +120,12 @@ io.on('connection', (client) => {
 
 
     client.on('disconnect', function () {
+        gameStart= false;
+        Object.keys(players).forEach( (id)  => {
+            players[id].ready = false;
+            players[id].bullet = null;
+            players[id].hp = 100;
+        })
         console.log('user disconnected');
         // remove this player from our players object
         delete players[client.id];

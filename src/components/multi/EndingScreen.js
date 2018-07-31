@@ -9,6 +9,12 @@ const textStyle = {
   };
 
 class EndingScreen extends Component {
+
+    handleClick=()=>{
+
+    }
+
+    
     render() {
         const toDisplay = this.props.winner ? "You Won!" : "You Lost!"
         return (
@@ -21,7 +27,7 @@ class EndingScreen extends Component {
                     {toDisplay}
                     </text>
                 </svg>
-            <Button style={{fontSize:30, fontFamily: "COURIER"}}>PLAY AGAIN</Button>
+            <Button onClick={this.handleClick} style={{fontSize:30, fontFamily: "COURIER"}}>PLAY AGAIN</Button>
             </div>
         );
     }
