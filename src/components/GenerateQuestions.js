@@ -49,13 +49,23 @@ export function multiplyMath(digits, boxes) {
 
 export function hardMath(digits, boxes) {
     let result =[];
+    let newNumber = randGen(digits);
 
     while(boxes > 0){
-        result.push(randGen(digits));
+        while(result.includes(newNumber)){
+            newNumber = randGen(digits);
+        }
+
+        result.push(newNumber);
         result.push(ops[randGen(1, 5)-1]);
         boxes--;
     }    
-    result.push(randGen(digits));
+
+    while(result.includes(newNumber)){
+        newNumber = randGen(digits);
+    }
+
+    result.push(newNumber);
     return result;
 }
 

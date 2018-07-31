@@ -50,6 +50,7 @@ io.on('connection', (client) => {
     }
 
     const emitGameOver = function(playerId){
+        players[client.id].score =0;
         players[client.id].hp =100;
         players[client.id].bullet =null;
         io.emit("GAME_OVER", {loser:playerId});

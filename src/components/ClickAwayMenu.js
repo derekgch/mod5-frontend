@@ -70,8 +70,8 @@ class ClickAway extends React.Component {
       <div className={classes.root}>
         <ClickAwayListener onClickAway={this.handleClickAway}>
           <div>
-            <Button onClick={this.handleClick}>
-                <MenuIcon style={{color: primary}}/>
+            <Button onClick={this.handleClick} style={{color:'white'}}>
+                <MenuIcon />
                 Menu
             </Button>
             {open ? (

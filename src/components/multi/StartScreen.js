@@ -30,6 +30,15 @@ class StartScreen extends Component {
     clearIntervalFn=()=>{
         clearInterval(this.countInterval);
     }
+    componentDidUpdate(prevProps, prevState){
+        if(prevProps.waiting!== this.props.waiting){
+            if(!this.props.waiting)
+                this.countInterval = setInterval(this.countDown, 999)   
+                
+            if(this.props.waiting)
+                this.setState({ready:false})
+        }
+    }
 
     shouldComponentUpdate(nextProps, nextState){
         if(nextProps.waiting !== this.props.waiting
@@ -57,7 +66,6 @@ class StartScreen extends Component {
         
         this.setState({ready:true});
         this.props.getReady();
-        this.countInterval = setInterval(this.countDown, 999)
     }
 
     moveOutOfScreen=()=>{

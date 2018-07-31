@@ -47,13 +47,13 @@ class multiContainer extends Component {
     componentDidMount(){
 
         socket.emit("RESTART");
-        socket.on("ALL_PLAYERS", (data) => this.getPlayers(data));
+        socket.on("ALL_PLAYERS", data => this.getPlayers(data));
         socket.on("PLAYER_SELF", data=>this.updateSelf(data))
         socket.on("PLAYER_MOVED", data => this.updateOtherPlayer(data));
         socket.on("PLAYER_FIRED", data => this.updatePlayerFire(data));
         socket.on("PLAYER_HIT", data => this.getPlayers(data));
         socket.on("NEW_QUESTIONS", data => this.updateQuestion(data));
-        socket.on("START_GAME",(data) =>  this.initGame(data))
+        socket.on("START_GAME", data =>  this.initGame(data))
         socket.on("GAME_OVER", data=> this.gameOver(data))
         socket.on("disconnect", data=> this.userDisconnected(data) )
 
@@ -68,6 +68,8 @@ class multiContainer extends Component {
 
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyEvent);
+        console.log("unmount event")
+        socket.emit("UNMOUNT")
     }
 
 
@@ -122,8 +124,8 @@ class multiContainer extends Component {
         })
     }
 
-    userDisconnected=()=>{
-        alert("other user disconnected");
+    userDisconnected=(data)=>{
+        alert("user disconnected");
         this.resetGame();
     }
 
@@ -210,7 +212,7 @@ class multiContainer extends Component {
         else pos += amt;
         if(pos> window.innerWidth-100) pos = window.innerWidth-100;
         if(pos < 0) pos =0;
-        if(start) pos = window.innerWidth/2 -50 ;
+        if(start) pos = window.innerWidth*0.615 -50 ;
         TweenLite.to(this.firePlatform, 2, {
         x: pos,
         onUpdate: this.setBasePosFn,

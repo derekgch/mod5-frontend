@@ -169,7 +169,7 @@ class GameContainer extends Component {
         else pos += amt;
         if(pos> window.innerWidth-100) pos = window.innerWidth-100;
         if(pos < 0) pos =0;
-        if(start) pos = window.innerWidth/2 -50 ;
+        if(start) pos = window.innerWidth*0.615 -50 ;
         TweenLite.to(this.firePlatform, 2, {
         x: pos,
         onUpdate: this.setBasePosFn,
