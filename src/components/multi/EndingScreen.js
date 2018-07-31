@@ -27,7 +27,7 @@ class EndingScreen extends Component {
                     {toDisplay}
                     </text>
                 </svg>
-            <Button onClick={this.handleClick} style={{fontSize:30, fontFamily: "COURIER"}}>PLAY AGAIN</Button>
+            <Button onClick={this.handleClick} style={{fontSize:30, fontFamily: "COURIER", color:"red"}}>PLAY AGAIN</Button>
             </div>
         );
     }

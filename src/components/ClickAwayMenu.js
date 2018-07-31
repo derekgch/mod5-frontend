@@ -79,6 +79,7 @@ class ClickAway extends React.Component {
 
               <MenuItem onClick={this.handleClickMenu} id="math">Math</MenuItem>
               <MenuItem onClick={this.handleClickMenu} id="word" >Word</MenuItem>
+              <MenuItem onClick={this.handleClickMenu} id="multi" >Multi</MenuItem>
 
               {this.props.userId? 
               <MenuItem onClick={this.handleClickMenu} id="list" >Word List</MenuItem>

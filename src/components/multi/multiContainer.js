@@ -21,8 +21,8 @@ import { hardMath, calAnswer, ops } from "../GenerateQuestions";
 
 
 
+const socket = openSocket('http://localhost:5000');
 
-const  socket = openSocket('http://localhost:5000');
 
 class multiContainer extends Component {
 
@@ -40,11 +40,13 @@ class multiContainer extends Component {
             started: false,
             winner:null,
         }
+
     }
 
 
     componentDidMount(){
 
+        socket.emit("RESTART");
         socket.on("ALL_PLAYERS", (data) => this.getPlayers(data));
         socket.on("PLAYER_SELF", data=>this.updateSelf(data))
         socket.on("PLAYER_MOVED", data => this.updateOtherPlayer(data));
@@ -53,8 +55,12 @@ class multiContainer extends Component {
         socket.on("NEW_QUESTIONS", data => this.updateQuestion(data));
         socket.on("START_GAME",(data) =>  this.initGame(data))
         socket.on("GAME_OVER", data=> this.gameOver(data))
+        socket.on("disconnect", data=> this.userDisconnected(data) )
 
-        // this.reportQuestion()        
+
+        // console.log("Mount again or Did it?");
+        // console.log(this.state.self, this.state.other)
+        
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
         this.props.setLevel({digits: 1, box: 2, lvl: 2})
@@ -88,7 +94,8 @@ class multiContainer extends Component {
     }
 
     resetGame=()=>{
-        this.setState({ started:false, 
+        this.setState({ 
+                        started:false, 
                         pause:false,
                         winner: null,
                         otherBullet:[],
@@ -97,8 +104,7 @@ class multiContainer extends Component {
                         answer:null,
                         correntOP:null,
                     })
-
-        
+        this.props.setScore(0);
     }
 
 
@@ -106,7 +112,9 @@ class multiContainer extends Component {
         Object.keys(data).forEach( (id)  => {
             if (data[id].playerId === socket.id) {
                 console.log("self", id);
-                this.setState({self:data[id]})
+                this.setState({self:data[id]}, ()=>{
+                    this.props.setScore(this.state.self.score)
+                })
             } else {
                 console.log("other",id);
                 this.setState({other:data[id]})
@@ -114,6 +122,10 @@ class multiContainer extends Component {
         })
     }
 
+    userDisconnected=()=>{
+        alert("other user disconnected");
+        this.resetGame();
+    }
 
     removeBullet=(bulletTime)=>{
         let active = this.state.otherBullet.filter(e => e.time !== bulletTime)
@@ -154,7 +166,7 @@ class multiContainer extends Component {
         let bullet= this.otherProjectile(data.bullet.time, data.bullet.op);
         let active = this.state.otherBullet.filter(e => (now - e.time) < 6000 )
             
-        console.log("bullets", bullet)
+        // console.log("bullets", bullet)
         this.setState({otherBullet: [...active, bullet]});
     }
 
@@ -289,10 +301,9 @@ class multiContainer extends Component {
 
     collided = (bulletTime, op) =>{
         if(!this.state.checkingAns){
-        let found = this.props.fired.find( e => e.time === bulletTime)
+        // let found = this.props.fired.find( e => e.time === bulletTime)
         // this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
         this.reportPlayerHit(op);
-        
         let active = this.props.fired.filter( e => e.time !== bulletTime)
         this.props.updateFired("UPDATE_FIRE", active)
         }
@@ -301,7 +312,7 @@ class multiContainer extends Component {
 
     collidedOther=(bulletTime)=>{
         if(!this.state.checkingAns){
-            let found = this.state.otherBullet.find( e => e.time === bulletTime)
+            // let found = this.state.otherBullet.find( e => e.time === bulletTime)
             // this.setState({filledOp: [...this.state.filledOp, found.item]}, this.displayAnswer)
             let active = this.state.otherBullet.filter(e => e.time!== bulletTime)
             this.setState({otherBullet: [...active]})

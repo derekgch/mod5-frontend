@@ -36,8 +36,13 @@ class App extends Component {
        setScore={this.props.setScore} />;
         break;
       case "list":
-       display = <WordList 
-       id= {this.props.currentUserId}/>;
+        display = <WordList 
+        id= {this.props.currentUserId}/>;
+        break;
+      case "multi":
+       display = <Multiplayer 
+            score = {this.props.score}
+            setScore={this.props.setScore}/>;
         break;
 
       case "score":
@@ -46,14 +51,12 @@ class App extends Component {
         break;
       
       default:
-       display = <GameContainer 
-       score = {this.props.score}
-       setScore={this.props.setScore} />;
+      display = <Multiplayer 
+      score = {this.props.score}
+      setScore={this.props.setScore}/>;
         break;
     }
     //testing multiplayer
-    display= <Multiplayer />
-
     return display;
   }
 

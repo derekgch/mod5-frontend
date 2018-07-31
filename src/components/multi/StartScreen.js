@@ -94,7 +94,7 @@ class StartScreen extends Component {
     render() {
 
         let displayButton = this.state.ready? null 
-            : <Button onClick={this.handleClick} style={{fontSize:30, fontFamily: "COURIER"}}>READY!</Button>
+            : <Button onClick={this.handleClick} style={{fontSize:30, fontFamily: "COURIER", color:"red"}}>READY!</Button>
 
         // console.log("ss", displayButton);
         

@@ -62,12 +62,15 @@ io.on('connection', (client) => {
         name:"",
         bullet: null,
         ready: false,
+        score: 0,
         playerId: client.id };
 
     // client.emit('NEW_PLAYER', players[client.id])
     emitPlayerSelf();
-
-    io.emit("ALL_PLAYERS", players)
+    
+    client.on("RESTART", () => {
+        io.emit("ALL_PLAYERS", players)
+    })
 
     client.on("USER_READY", id=>{
         console.log(id);
@@ -119,6 +122,7 @@ io.on('connection', (client) => {
     client.on('BULLET_HIT', data =>{
         if(gameStart && data.op === currentOp){
             players[data.otherPlayer].hp -= 20;
+            players[client.id].score +=10;
         }
         // console.log(data.op, currentOp);
         if(players[data.otherPlayer].hp < 1){
