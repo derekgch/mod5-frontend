@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 
 class App extends Component {
   componentDidMount(){
+    document.body.style = 'background: #ECEFF1;';
     const token = localStorage.getItem("token");
     if(!!token){
       const data = JSON.parse( atob(token.split(".")[1]));
@@ -69,7 +70,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App" style={{backgroundColor: "#ECEFF1"}}>
         <NavBar currentUserId={this.props.currentUserId}
         score = {this.props.score}
         userId = {this.props.currentUserId}

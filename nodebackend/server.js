@@ -50,7 +50,6 @@ io.on('connection', (client) => {
     }
 
     const emitGameOver = function(playerId){
-        players[client.id].score =0;
         players[client.id].hp =100;
         players[client.id].bullet =null;
         io.emit("GAME_OVER", {loser:playerId});
@@ -77,6 +76,7 @@ io.on('connection', (client) => {
         console.log(id);
         
         let allUserReady = true;
+        players[id].score =0;
         
         players[id].ready= true;
         Object.keys(players).forEach( (id)  => {

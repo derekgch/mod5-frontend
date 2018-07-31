@@ -69,7 +69,7 @@ class multiContainer extends Component {
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyEvent);
         console.log("unmount event")
-        socket.emit("UNMOUNT")
+        // socket.emit("UNMOUNT")
     }
 
 

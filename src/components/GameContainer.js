@@ -29,6 +29,7 @@ class GameContainer extends Component {
     componentDidMount(){
         this.props.updateFired("UPDATE_FIRE", []);
         // this.filterBullet((new Date()).getTime());
+        this.props.setScore(0);
         this.genNewEq(this.props);
         let qCnt = this.refs.qContainer;
         this.flyLeft(qCnt, 15, "qContainer", 0.1);
@@ -236,10 +237,18 @@ class GameContainer extends Component {
                     this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
                 }
                 break;
+
+            case 'Backspace':
+                this.removeFilled();
+                break;
         
             default:
                 break;
         }
+    }
+
+    removeFilled=()=>{
+        this.setState({filledOp:[]})
     }
 
     

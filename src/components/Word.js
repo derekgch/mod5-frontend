@@ -67,7 +67,7 @@ function SimpleCard(props) {
 
   return (
     <div>
-      <Card className={classes.card}>
+      <Card className={classes.card} style={{margin: "10px"}}>
         <CardContent>
 
           <Typography variant="headline" component="h2">

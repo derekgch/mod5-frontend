@@ -28,6 +28,7 @@ class GameContainer extends Component {
     }
 
     componentDidMount(){
+        this.props.setScore(0);
         this.props.updateFired("UPDATE_FIRE", [])
         this.genWord(this.props);
         let qCnt = this.refs.qContainer;
@@ -192,7 +193,8 @@ class GameContainer extends Component {
         
         const now = (new Date()).getTime();
         let active = this.filterBullet(now)
-
+        console.log(event.key);
+        
         switch (event.key) {
             case 'ArrowLeft':
                 event.preventDefault();
@@ -218,10 +220,18 @@ class GameContainer extends Component {
                     this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
                 }
                 break;
-        
+
+            case 'Backspace':
+                this.removeFilled();
+                break;
+
             default:
                 break;
         }
+    }
+
+    removeFilled=()=>{
+        this.setState({filledLetter:[]})
     }
 
     

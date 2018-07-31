@@ -13,9 +13,13 @@ class LinearBuffer extends React.Component {
 
   constructor(props) {
       super(props);
+      let n = props.completed;
+      if(!props.completed){
+        n =100
+      }
       this.state = {
-        completed: props.completed,
-        buffer: props.completed,
+        completed: n,
+        buffer: n,
       };
   }
   
