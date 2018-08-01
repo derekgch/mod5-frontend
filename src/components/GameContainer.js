@@ -319,7 +319,7 @@ class GameContainer extends Component {
                 
 
                     <div  className= "fpContainer" ref={c => this.firePlatform = c}>
-                    <FirePlatform x={55} y={10}  
+                    <FirePlatform x={65} y={10}  
                                 op = {ops[this.state.opIndex]}
                                 key= "fireplatform__XD1"
                                 setBasePos ={this.props.setBasePos}

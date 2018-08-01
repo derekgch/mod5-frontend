@@ -296,7 +296,7 @@ class GameContainer extends Component {
         return (
             <div  id="gameContainer">       
                     <div  className= "fpContainer" ref={c => this.firePlatform = c}>
-                    <FirePlatform x={55} y={10}  
+                    <FirePlatform x={65} y={10}  
                                 op = {vowels[this.state.vowelIndex]}
                                 key= "fireplatform__XD1"
                                 setBasePos ={this.props.setBasePos}

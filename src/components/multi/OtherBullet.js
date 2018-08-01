@@ -13,7 +13,7 @@ class OtherBullet extends React.Component {
 
     componentDidMount(){
         let bCnt = this.refs.bullet;
-        this.flyDown(bCnt, 3, "bullet2", 0.1);
+        this.flyDown(bCnt, 2, "bullet2", 0.0);
         this.interval = setInterval(this.isHit, 50); 
     }
 

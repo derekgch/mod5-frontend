@@ -60,6 +60,7 @@ class multiContainer extends Component {
 
         // console.log("Mount again or Did it?");
         // console.log(this.state.self, this.state.other)
+        this.props.updateFired("UPDATE_FIRE", [])
         this.reportUsername();
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
@@ -169,8 +170,10 @@ class multiContainer extends Component {
     }
 
     updatePlayerFire=(data)=>{
+        console.log(data);
+        
         let now = (new Date()).getTime();
-        let bullet= this.otherProjectile(data.bullet.time, data.bullet.op);
+        let bullet= this.otherProjectile(data.bullet.time, data.bullet.op, data.bullet.pos);
         let active = this.state.otherBullet.filter(e => (now - e.time) < 6000 )
             
         // console.log("bullets", bullet)
@@ -199,7 +202,7 @@ class multiContainer extends Component {
     }
     
     reportFireEvent=(time)=>{    
-        socket.emit("FIRED", {time, op:ops[this.state.opIndex]})
+        socket.emit("FIRED", {time, op:ops[this.state.opIndex], pos:this.state.self.x})
     }
 
     reportSelfPos=(posX)=>{
@@ -232,7 +235,7 @@ class multiContainer extends Component {
    }
 
    otherPlayerPos=(otherPlayer)=>{
-       let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -100;
+       let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -130;
         TweenLite.to(this.otherPlayer, .5, {
             x: pos,
             repeat: -1,
@@ -340,12 +343,12 @@ class multiContainer extends Component {
         return this.state.otherBullet.map(e => e.data);
     }
 
-    otherProjectile=(now, op)=>{
-
+    otherProjectile=(now, op, pos)=>{
+        console.log(pos)
         return {data: <OtherBullet hit={false}
         position={{x:0, y:70}} 
         qContainer = {this.firePlatform}
-        startAt={window.innerWidth - 70 - this.state.other.x* window.innerWidth / 100} 
+        startAt={window.innerWidth - 90 - pos* window.innerWidth / 100} 
         collided ={this.collidedOther}
         item = {"?"}
         removeBullet = {this.removeBullet}
@@ -361,7 +364,7 @@ class multiContainer extends Component {
         return {data: <Bullet hit={false} 
         position={{x:0, y:70}} 
         qContainer = {this.otherPlayer}
-        startAt={this.props.basePos * window.innerWidth / 100 +20} 
+        startAt={this.props.basePos * window.innerWidth / 100 +40} 
         collided ={this.collided}
         item = {ops[this.state.opIndex]}
         key={UUID()} 
@@ -392,7 +395,7 @@ class multiContainer extends Component {
             <div>
 
                 <div  className= "fpContainer" ref={c => this.firePlatform = c}>
-                    <FirePlatform x={55} y={10}
+                    <FirePlatform x={65} y={10}
                     op = {ops[this.state.opIndex]}                    
                     />
                 </div>
