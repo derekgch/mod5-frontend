@@ -59,7 +59,7 @@ io.on('connection', (client) => {
     players[client.id] = {      
         x: 61,
         hp: 100,
-        name:"",
+        userId:"",
         bullet: null,
         ready: false,
         score: 0,
@@ -70,6 +70,10 @@ io.on('connection', (client) => {
     
     client.on("RESTART", () => {
         io.emit("ALL_PLAYERS", players)
+    })
+
+    client.on("USER_ID", id =>{
+        players[client.id].userId = id;
     })
 
     client.on("USER_READY", id=>{

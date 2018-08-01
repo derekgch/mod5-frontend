@@ -39,7 +39,7 @@ class WordList extends Component {
     }
 
     toDisplay=() => {
-        if(this.state.words.length > 0) 
+        if(this.state.words) 
             return this.state.words.map(e => 
             <Grid key={UUID()} xs={3} spacing={40}><Word word={e.word} def={e.def} /> </Grid>)
         else{

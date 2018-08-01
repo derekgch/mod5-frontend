@@ -57,6 +57,20 @@ class Adapter {
         return fetch(`${URL}games/`, config)
     }
 
+    static postMulti(data){
+        let config ={
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/JSON'
+            },
+            body: JSON.stringify({
+                ...data,
+                type:"Multi"
+            })
+        }
+        return fetch(`${URL}games/`, config)
+    }
+
     static patchWord(id, word){
         let config ={
             method: 'PATCH', 

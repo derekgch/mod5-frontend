@@ -53,14 +53,14 @@ class multiContainer extends Component {
         socket.on("PLAYER_FIRED", data => this.updatePlayerFire(data));
         socket.on("PLAYER_HIT", data => this.getPlayers(data));
         socket.on("NEW_QUESTIONS", data => this.updateQuestion(data));
-        socket.on("START_GAME", data =>  this.initGame(data))
-        socket.on("GAME_OVER", data=> this.gameOver(data))
-        socket.on("disconnect", data=> this.userDisconnected(data) )
+        socket.on("START_GAME", data =>  this.initGame(data));
+        socket.on("GAME_OVER", data=> this.gameOver(data));
+        socket.on("disconnect", data=> this.userDisconnected(data) );
 
 
         // console.log("Mount again or Did it?");
         // console.log(this.state.self, this.state.other)
-        
+        this.reportUsername();
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
         this.props.setLevel({digits: 1, box: 2, lvl: 2})
@@ -87,8 +87,13 @@ class multiContainer extends Component {
 
     gameOver=(data)=>{
         if(data.loser !== socket.id){
-            console.log("WINNER!");
+            console.log(this.state.self, this.state.other);
             this.setState({winner:true, pause: true})
+            Adapter.postMulti({winner: this.state.self.userId, 
+                                loser: this.state.other.userId,
+                                winnerP: this.state.self.score,
+                                loserP: this.state.other.score,
+                            });
         }else{
             console.log("LOSER!")
             this.setState({winner:false, pause: true})
@@ -203,6 +208,11 @@ class multiContainer extends Component {
 
     reportReady=()=>{
         socket.emit("USER_READY", socket.id);
+    }
+    reportUsername=()=>{
+        if(this.props.userId){
+            socket.emit("USER_ID", this.props.userId)
+        }
     }
 
     togglePos=(left, start)=>{
@@ -415,6 +425,7 @@ function mapStateToProps(state){
         lvl: state.lvl,
         userId: state.currentUserId,
         score: state.score,
+        userName: state.currentUserName,
     }
 }
 

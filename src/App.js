@@ -52,9 +52,9 @@ class App extends Component {
         break;
       
       default:
-      display = <Multiplayer 
-      score = {this.props.score}
-      setScore={this.props.setScore}/>;
+        display = <Multiplayer 
+                  score = {this.props.score}
+                  setScore={this.props.setScore}/>;
         break;
     }
     //testing multiplayer

@@ -52,7 +52,7 @@ class InteractiveList extends React.Component {
             </Typography>
             <div className={classes.demo}>
                 <List>
-                {generate(this.props.data)}
+                {this.props.data? generate(this.props.data):null}
                 </List>
             </div>
         </Grid>
