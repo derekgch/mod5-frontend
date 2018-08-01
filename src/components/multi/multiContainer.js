@@ -265,7 +265,10 @@ class multiContainer extends Component {
 
 
    handleKeyEvent=(event) => {
-    if(this.state.pause) return null;
+    if(this.state.pause) {
+        event.preventDefault();
+        return null;
+    }
             
     const now = (new Date()).getTime();
     let active = this.filterBullet(now);

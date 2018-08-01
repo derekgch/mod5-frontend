@@ -109,10 +109,15 @@
 
 .loginContainer{
   position: absolute;  
-  margin-left: auto;
-  margin-right: auto;
-  left: 0;
-  right: 0;
+  align-self: center;
+
+  left: 30%;
+  top: 20%;
+}
+
+.signUpContainer{
+  position: absolute;  
+  align-self: center;
   top: 15vw;
 }
 

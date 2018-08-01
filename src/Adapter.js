@@ -19,6 +19,7 @@ class Adapter {
     }
 
     static postSignUp(user_obj){
+        console.log(user_obj)
         let config ={
             method: 'POST', 
             headers: {
@@ -65,7 +66,8 @@ class Adapter {
             },
             body: JSON.stringify({
                 ...data,
-                type:"Multi"
+                user_id: data.winner, 
+                type:"multi"
             })
         }
         return fetch(`${URL}games/`, config)
