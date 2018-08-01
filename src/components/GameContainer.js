@@ -9,6 +9,7 @@ import { setLevel } from '../actions';
 import HpBar from './HpBar';
 import Adapter from '../Adapter'
 
+
 import UUID from 'uuid'
 import {TweenMax, Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
 import { simpleMath, multiplyMath, hardMath, calAnswer, ops , swapOP} from "./GenerateQuestions";
@@ -32,7 +33,7 @@ class GameContainer extends Component {
         this.props.setScore(0);
         this.genNewEq(this.props);
         let qCnt = this.refs.qContainer;
-        this.flyLeft(qCnt, 15, "qContainer", 0.1);
+        this.flyLeft(qCnt, 12, "qContainer", 0.1);
         this.togglePos(true, true)
         this.setBasePosFn();
         document.addEventListener("keydown", this.handleKeyEvent)
@@ -255,9 +256,9 @@ class GameContainer extends Component {
     flyRight =(el, amt, name, delay)=> {
         TweenMax.fromTo(el, amt, {
           y:100, 
-          x: -300
+          x: -100
         }, {
-          x: window.innerWidth-300,
+          x: window.innerWidth-200,
           y:100,
           rotation: 0,
           delay: delay, 
@@ -270,9 +271,9 @@ class GameContainer extends Component {
       flyLeft =(el, amt, name, delay)=> {
         TweenMax.fromTo(el, amt, {
           y:100, 
-          x: window.innerWidth-300
+          x: window.innerWidth-200
         }, {
-          x: -300,
+          x: -100,
           y:100,
           rotation: 0,
           delay: delay, 
@@ -314,7 +315,9 @@ class GameContainer extends Component {
     render() {
         const displayUserEq = this.state.checkingAns ? this.showUserAns() : null;
         return (
-            <div  id="gameContainer">       
+            <div  id="gameContainer">     
+                
+
                     <div  className= "fpContainer" ref={c => this.firePlatform = c}>
                     <FirePlatform x={55} y={10}  
                                 op = {ops[this.state.opIndex]}
@@ -336,7 +339,6 @@ class GameContainer extends Component {
                 {displayUserEq}
                 <Instruction />
                 <HpBar   completed={this.state.hp}/>
-                {/* <Score score={this.state.score}/> */}
             </div>
         );
     }

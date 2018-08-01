@@ -32,7 +32,7 @@ class GameContainer extends Component {
         this.props.updateFired("UPDATE_FIRE", [])
         this.genWord(this.props);
         let qCnt = this.refs.qContainer;
-        this.flyLeft(qCnt, 15, "qContainer", 0.1);
+        this.flyLeft(qCnt, 10, "qContainer", 0.1);
         this.togglePos(true, true)
         this.setBasePosFn();
         document.addEventListener("keydown", this.handleKeyEvent)
@@ -238,7 +238,7 @@ class GameContainer extends Component {
     flyRight =(el, amt, name, delay)=> {
         TweenMax.fromTo(el, amt, {
           y:100, 
-          x: -300
+          x: -100
         }, {
           x: window.innerWidth-300,
           y:100,
@@ -255,7 +255,7 @@ class GameContainer extends Component {
           y:100, 
           x: window.innerWidth-300
         }, {
-          x: -300,
+          x: -100,
           y:100,
           rotation: 0,
           delay: delay, 

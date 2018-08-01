@@ -24,12 +24,14 @@ const styles = theme => ({
 class InteractiveList extends React.Component {
     state={
         math: [],
-        word: []
+        word: [],
+        multi:[],
     }
     componentDidMount(){
         Adapter.getTop5().then(r => r.json()).then(data => this.setState({
             math: data.math,
-            word: data.word
+            word: data.word,
+            
         }) )
     }
 
@@ -44,6 +46,7 @@ class InteractiveList extends React.Component {
         <Grid container={true} spacing={16} direction={'row'}>
          <ScoreCard title={"Math Score Board"} data={this.state.math}/>
          <ScoreCard title={"Word Score Board"} data={this.state.word}/>          
+         <ScoreCard title={"Multi Score Board"} data={this.state.multi}/>          
         </Grid>
         
          </div>

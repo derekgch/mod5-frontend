@@ -1,11 +1,14 @@
-const URL="http://localhost:4000/"
-const WordUrl = "http://localhost:4000/api/v1/"
-const GAMETOP5 = "http://localhost:4000/games/top"
+export const ip = "192.168.3.135"
+
+const URL=`http://${ip}:4000/`
+const WordUrl = `http://${ip}:4000/api/v1/`
+const GAMETOP5 = `http://${ip}:4000/games/top`
 
 // words, long, hard
 
 
 class Adapter {
+    
 
     static postLogin(name, pw){
         let config ={

@@ -8,6 +8,8 @@ import {login, clickLogin, logout, clickMenu, setScore} from './actions'
 import WordList from './components/WordList';
 import ScoreBoard from './components/ScoreBoard'
 import Multiplayer from './components/multi/multiContainer'
+import Info from './components/info';
+
 
 import { connect } from 'react-redux'
 
@@ -40,6 +42,13 @@ class App extends Component {
         display = <WordList 
         id= {this.props.currentUserId}/>;
         break;
+
+      case "readme":
+        display = <Info 
+        score = {this.props.score}
+        setScore={this.props.setScore}/>;
+        break;
+
       case "multi":
        display = <Multiplayer 
             score = {this.props.score}
@@ -52,9 +61,9 @@ class App extends Component {
         break;
       
       default:
-        display = <Multiplayer 
-                  score = {this.props.score}
-                  setScore={this.props.setScore}/>;
+        display = <Info 
+        score = {this.props.score}
+        setScore={this.props.setScore}/>;
         break;
     }
     //testing multiplayer

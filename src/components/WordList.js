@@ -41,7 +41,7 @@ class WordList extends Component {
     toDisplay=() => {
         if(this.state.words.length >0) 
             return this.state.words.map(e => 
-            <Grid key={UUID()} xs={3} spacing={40}><Word word={e.word} def={e.def} /> </Grid>)
+            <Grid key={UUID()} item xs={"auto"} ><Word word={e.word} def={e.def} /> </Grid>)
         else{
             return <Grid key={UUID()} ><Word word={`Empty`} def={`Nothing, nil, null`} /> </Grid>
         }
@@ -53,9 +53,9 @@ class WordList extends Component {
 
             <div className="wordListContianer">
             <Grid  container spacing={16}>
-              <Grid   className={classes.root}  item xs={12}>
-                {this.toDisplay()}
-            </Grid>
+                <Grid   className={classes.root} container item xs={12}>
+                    {this.toDisplay()}
+                </Grid>
             </Grid>
             </div>
         );

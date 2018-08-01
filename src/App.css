@@ -147,3 +147,8 @@
   right: 0;
   top: 20vw;
 }
+
+.instructionKeyBoard{
+  opacity: .8;
+  z-index: -2;
+}

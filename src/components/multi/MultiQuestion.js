@@ -79,7 +79,7 @@ class MultiQuestion extends Component {
         eq.push(this.props.ans)
 
         const toRender = this.questionToRender(eq, filled);
-        const width = this.totalWidth(eq)
+        const width = this.totalWidth(eq) + 100;
         return (
             <svg width={width} viewBox={`0 0 ${width} 130`} >                
                 <g>
