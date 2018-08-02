@@ -144,8 +144,10 @@ io.on('connection', (client) => {
 
     client.on("UNMOUNT", ()=>{
         console.log("unmount event");
-        
-        emitGameOver(client.id)
+        players[client.id].hp =100;
+        players[client.id].ready =false;
+        gameStart = false;
+        // emitGameOver(client.id)
     })
 
 

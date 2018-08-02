@@ -108,6 +108,7 @@ class InputAdornments extends React.Component {
                 
                 <TextField
                 label="User name"
+                value={this.state.user_name}
                 className={classNames(classes.margin, classes.textField)}
                 onChange={this.handleChange('user_name')}
                 />
