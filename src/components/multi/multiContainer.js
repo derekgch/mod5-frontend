@@ -113,6 +113,8 @@ class multiContainer extends Component {
                         correntOP:null,
                     })
         this.props.setScore(0);
+        socket.emit("UNMOUNT");
+
     }
 
 
@@ -131,7 +133,7 @@ class multiContainer extends Component {
     }
 
     userDisconnected=(data)=>{
-        alert("user disconnected");
+        console.log("user disconnected");
         this.resetGame();
     }
 
@@ -235,7 +237,7 @@ class multiContainer extends Component {
    }
 
    otherPlayerPos=(otherPlayer)=>{
-       let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -130;
+       let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -20;
         TweenLite.to(this.otherPlayer, .5, {
             x: pos,
             repeat: -1,
@@ -348,7 +350,7 @@ class multiContainer extends Component {
         return {data: <OtherBullet hit={false}
         position={{x:0, y:70}} 
         qContainer = {this.firePlatform}
-        startAt={window.innerWidth - 90 - pos* window.innerWidth / 100} 
+        startAt={window.innerWidth  + 10 - pos* window.innerWidth / 100} 
         collided ={this.collidedOther}
         item = {"?"}
         removeBullet = {this.removeBullet}

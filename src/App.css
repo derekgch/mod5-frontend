@@ -102,9 +102,11 @@
   position: absolute;  
   margin-left: auto;
   margin-right: auto;
-  left: 0;
+  left: 30%;
   right: 0;
-  top: 15vw;
+  top: 13vw;
+  width: 150%;
+  height: auto;
 }
 
 .loginContainer{
@@ -154,7 +156,7 @@
 }
 
 .strech{
-  background-size: cover;
-  width:90%;
-  height:100%;
+  /* background-size: cover; */
+  width:70%;
+  height:70%;
 }

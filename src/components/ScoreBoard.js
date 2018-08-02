@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ScoreCard from './ScoreCard';
+import ScoreCardMulti from './ScoreCardMulti';
+
 import Adapter from '../Adapter';
 
 
@@ -31,23 +33,28 @@ class InteractiveList extends React.Component {
         Adapter.getTop5().then(r => r.json()).then(data => this.setState({
             math: data.math,
             word: data.word,
+            multi: data.multi,
 
         }) )
     }
 
+
+
   render() {
     const { classes } = this.props;
 
-
+    console.log(this.state.multi);
+    
     return (
         <div className="scoreContainer">
       <div className={classes.root}>
+      <h1>TOP 5 Score Board</h1>
 
-        <Grid container={true} spacing={16} direction={'row'}>
+        <Grid container={true} spacing={16} direction={'row'} alignItems={'flex-start'}>
          <ScoreCard title={"Math Score Board"} data={this.state.math}/>
-         <ScoreCard title={"Word Score Board"} data={this.state.word}/>          
+         <ScoreCard title={"Word Score Board"} data={this.state.word}/>     
+         <ScoreCardMulti title={"Multi Score Board"} data={this.state.multi}/>     
         </Grid>
-        
          </div>
       </div>
     );
