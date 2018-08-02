@@ -237,7 +237,7 @@ class multiContainer extends Component {
    }
 
    otherPlayerPos=(otherPlayer)=>{
-       let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -20;
+       let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -100;
         TweenLite.to(this.otherPlayer, .5, {
             x: pos,
             repeat: -1,
@@ -350,11 +350,11 @@ class multiContainer extends Component {
         return {data: <OtherBullet hit={false}
         position={{x:0, y:70}} 
         qContainer = {this.firePlatform}
-        startAt={window.innerWidth  + 10 - pos* window.innerWidth / 100} 
+        startAt={window.innerWidth  -60 - pos* window.innerWidth / 100} 
         collided ={this.collidedOther}
-        item = {"?"}
+        item = {"?"} 
         removeBullet = {this.removeBullet}
-        key={`bullet${now}`}   
+        key={`bullet  ${UUID()}`}   
         time={now}/>, 
         time:now,
         item:op
