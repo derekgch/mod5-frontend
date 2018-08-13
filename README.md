@@ -1,5 +1,5 @@
 # Play&Learn
-The Play&Learn is a full stack single page web app that allows users to 
+The Play&Learn is a full stack single page web app that allows users to play math game , word game and real time multiplayer mode to verse each other based on the math question given.
 
 # Motivation
 
