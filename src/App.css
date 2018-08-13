@@ -149,6 +149,12 @@
 }
 
 .instructionKeyBoard{
-  opacity: .8;
+  opacity: .9;
   z-index: -2;
+}
+
+.strech{
+  background-size: cover;
+  width:90%;
+  height:100%;
 }

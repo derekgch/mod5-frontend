@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import KeyBoard from '../img/keyboard.png';
+import k1 from '../img/sd.png'
 import GameContainer from './GameContainer';
 
 
@@ -10,7 +11,7 @@ class info extends Component {
                 <GameContainer 
                             score = {this.props.score}
                             setScore={this.props.setScore}/>
-                <img src={KeyBoard} height="60%" />
+                <img src={k1} style={{}} className="strech" />
             </div>
         );
     }
