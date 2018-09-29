@@ -16,7 +16,7 @@ import Adapter, { ip } from '../../Adapter'
 import OtherBullet from './OtherBullet'
 
 import UUID from 'uuid'
-import { Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
+import {  TweenLite, Sine} from "gsap/TweenMax";
 import { hardMath, calAnswer, ops } from "../GenerateQuestions";
 
 
@@ -57,9 +57,6 @@ class multiContainer extends Component {
         socket.on("GAME_OVER", data=> this.gameOver(data));
         socket.on("disconnect", data=> this.userDisconnected(data) );
 
-
-        // console.log("Mount again or Did it?");
-        // console.log(this.state.self, this.state.other)
         this.props.updateFired("UPDATE_FIRE", [])
         this.reportUsername();
         document.addEventListener("keydown", this.handleKeyEvent);
