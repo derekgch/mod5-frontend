@@ -11,12 +11,10 @@ To install the Play&Learn, first fork and clone the frontend and backend repo.
 ## Tech/framework used
 React - Javascript  
 Ruby on Rails  
-Nodejs with expess
-Socket.io
-PostgreSQL 
-Materialized UI
-
-
+Nodejs with expess  
+Socket.io   
+PostgreSQL  
+Materialized UI 
 
 ## Installation
 ### Frontend: 
