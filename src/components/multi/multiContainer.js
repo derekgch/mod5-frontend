@@ -12,16 +12,16 @@ import Question from './MultiQuestion'
 import EndingScreen from './EndingScreen'
 
 
-import Adapter from '../../Adapter'
+import Adapter, { ip } from '../../Adapter'
 import OtherBullet from './OtherBullet'
 
 import UUID from 'uuid'
-import { Power1, TimelineLite, TweenLite, Sine} from "gsap/TweenMax";
+import {  TweenLite, Sine} from "gsap/TweenMax";
 import { hardMath, calAnswer, ops } from "../GenerateQuestions";
 
 
 
-const socket = openSocket('http://localhost:5000');
+const socket = openSocket(`http://${ip}:5000`);
 
 
 class multiContainer extends Component {
@@ -57,9 +57,7 @@ class multiContainer extends Component {
         socket.on("GAME_OVER", data=> this.gameOver(data));
         socket.on("disconnect", data=> this.userDisconnected(data) );
 
-
-        // console.log("Mount again or Did it?");
-        // console.log(this.state.self, this.state.other)
+        this.props.updateFired("UPDATE_FIRE", [])
         this.reportUsername();
         document.addEventListener("keydown", this.handleKeyEvent);
         this.togglePos(true, true);
@@ -69,7 +67,7 @@ class multiContainer extends Component {
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyEvent);
         console.log("unmount event")
-        // socket.emit("UNMOUNT")
+        socket.emit("UNMOUNT")
     }
 
 
@@ -112,6 +110,8 @@ class multiContainer extends Component {
                         correntOP:null,
                     })
         this.props.setScore(0);
+        socket.emit("UNMOUNT");
+
     }
 
 
@@ -130,7 +130,7 @@ class multiContainer extends Component {
     }
 
     userDisconnected=(data)=>{
-        alert("user disconnected");
+        console.log("user disconnected");
         this.resetGame();
     }
 
@@ -169,8 +169,10 @@ class multiContainer extends Component {
     }
 
     updatePlayerFire=(data)=>{
+        console.log(data);
+        
         let now = (new Date()).getTime();
-        let bullet= this.otherProjectile(data.bullet.time, data.bullet.op);
+        let bullet= this.otherProjectile(data.bullet.time, data.bullet.op, data.bullet.pos);
         let active = this.state.otherBullet.filter(e => (now - e.time) < 6000 )
             
         // console.log("bullets", bullet)
@@ -199,7 +201,7 @@ class multiContainer extends Component {
     }
     
     reportFireEvent=(time)=>{    
-        socket.emit("FIRED", {time, op:ops[this.state.opIndex]})
+        socket.emit("FIRED", {time, op:ops[this.state.opIndex], pos:this.state.self.x})
     }
 
     reportSelfPos=(posX)=>{
@@ -216,14 +218,14 @@ class multiContainer extends Component {
     }
 
     togglePos=(left, start)=>{
-        let amt = 200,
+        let amt = 50,
             pos = this.props.basePos * window.innerWidth / 100;
         if(left) pos -= amt;
         else pos += amt;
         if(pos> window.innerWidth-100) pos = window.innerWidth-100;
         if(pos < 0) pos =0;
         if(start) pos = window.innerWidth*0.615 -50 ;
-        TweenLite.to(this.firePlatform, 2, {
+        TweenLite.to(this.firePlatform, .5, {
         x: pos,
         onUpdate: this.setBasePosFn,
         repeat: -1,
@@ -233,7 +235,7 @@ class multiContainer extends Component {
 
    otherPlayerPos=(otherPlayer)=>{
        let pos = window.innerWidth - otherPlayer.x* window.innerWidth/100 -100;
-        TweenLite.to(this.otherPlayer, 2, {
+        TweenLite.to(this.otherPlayer, .5, {
             x: pos,
             repeat: -1,
             ease: Sine
@@ -265,7 +267,10 @@ class multiContainer extends Component {
 
 
    handleKeyEvent=(event) => {
-    if(this.state.pause) return null;
+    if(this.state.pause) {
+        event.preventDefault();
+        return null;
+    }
             
     const now = (new Date()).getTime();
     let active = this.filterBullet(now);
@@ -299,7 +304,7 @@ class multiContainer extends Component {
         case ' ':
             event.preventDefault();
 
-            if((now-this.props.lastFired) > 500){
+            if((now-this.props.lastFired) > 100){
                 this.reportFireEvent(now);
                 this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
             }
@@ -337,16 +342,16 @@ class multiContainer extends Component {
         return this.state.otherBullet.map(e => e.data);
     }
 
-    otherProjectile=(now, op)=>{
-
+    otherProjectile=(now, op, pos)=>{
+        console.log(pos)
         return {data: <OtherBullet hit={false}
         position={{x:0, y:70}} 
         qContainer = {this.firePlatform}
-        startAt={window.innerWidth - 70 - this.state.other.x* window.innerWidth / 100} 
+        startAt={window.innerWidth  -60 - pos* window.innerWidth / 100} 
         collided ={this.collidedOther}
-        item = {op}
+        item = {"?"} 
         removeBullet = {this.removeBullet}
-        key={`bullet${now}`}   
+        key={`bullet  ${UUID()}`}   
         time={now}/>, 
         time:now,
         item:op
@@ -358,7 +363,7 @@ class multiContainer extends Component {
         return {data: <Bullet hit={false} 
         position={{x:0, y:70}} 
         qContainer = {this.otherPlayer}
-        startAt={this.props.basePos * window.innerWidth / 100 +20} 
+        startAt={this.props.basePos * window.innerWidth / 100 +40} 
         collided ={this.collided}
         item = {ops[this.state.opIndex]}
         key={UUID()} 
@@ -389,7 +394,7 @@ class multiContainer extends Component {
             <div>
 
                 <div  className= "fpContainer" ref={c => this.firePlatform = c}>
-                    <FirePlatform x={55} y={10}
+                    <FirePlatform x={65} y={10}
                     op = {ops[this.state.opIndex]}                    
                     />
                 </div>

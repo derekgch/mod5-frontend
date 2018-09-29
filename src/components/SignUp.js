@@ -13,7 +13,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
 
 import Adapter from '../Adapter'
-import SingUp from './SignUp'
+
 
 const styles = theme => ({
     button: {
@@ -40,8 +40,10 @@ class InputAdornments extends React.Component {
   state = {
     user_name: '',
     password: '',
+    first_name: '',
+    last_name: '',
+    email: '',
     showPassword: false,
-    showSignUP: false,
   };
 
   componentWillUnmount(){
@@ -49,7 +51,6 @@ class InputAdornments extends React.Component {
   }
 
   handleChange = prop => event => {
-    
     this.setState({ [prop]: event.target.value });
   };
 
@@ -61,31 +62,40 @@ class InputAdornments extends React.Component {
     this.setState({
       user_name: '',
       password: '',
-
-      })
+      password_confirmation: '',
+      first_name: '',
+      last_name: '',
+      email: ''})
   }
 
   handleClickShowPassword = () => {
     this.setState(state => ({ showPassword: !state.showPassword }));
   };
 
-  handleClickLogin =({user_name, password}) => {
-    console.log(user_name, password);
-    
-    Adapter.postLogin(user_name, password )
-    .then(this.handleFetchError)
-    .then(data => {
-        localStorage.setItem("token", data.token);
-        this.props.loggedIn(data);
-    })
-    .catch(() => {
-      alert("wrong username or password")
-      this.resetState();
-    })
+
+  handleFetchError = (response) => {
+    if(response.ok){
+        return response.json()
+    }else{
+      console.log(response.message)
+        throw Error
+    }
   }
 
-  handleClickSignup=()=>{
-    this.setState({showSignUP: !this.state.showSignUP})
+  handleClickSignup = () => {
+        console.log(this.state)
+      let newUser = {user_name: this.state.user_name, 
+        password: this.state.password,
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
+        email: this.state.email
+     }
+    Adapter.postSignUp(newUser)
+    .then(this.handleFetchError)
+    .then(() =>{
+        this.props.handleClickLogin(this.state)
+    })
+    .catch(() => alert("Error"))
   }
 
   handleFetchError = (response) => {
@@ -98,21 +108,38 @@ class InputAdornments extends React.Component {
   }
 
 
+
+
   render() {
     const { classes } = this.props;
-    console.log(this.state);
+    // console.log(this.state);
     
     return (
-        <div className = "loginContainer">
+        <div className = "signUpContainer">
+            
             <div className={classes.root}>
-                
+            
                 <TextField
-                label="User name"
-                value={this.state.user_name}
+                label="User Name"
                 className={classNames(classes.margin, classes.textField)}
                 onChange={this.handleChange('user_name')}
                 />
+                <TextField
+                label="First Name"
+                className={classNames(classes.margin, classes.textField)}
+                onChange={this.handleChange('first_name')}
+                />
+                <TextField
+                label="Last Name"
+                className={classNames(classes.margin, classes.textField)}
+                onChange={this.handleChange('last_name')}
+                />
 
+                <TextField
+                label="Email Address"
+                className={classNames(classes.margin, classes.textField)}
+                onChange={this.handleChange('email')}
+                />
                 <FormControl className={classNames(classes.margin, classes.textField)}>
                 <InputLabel htmlFor="adornment-password">Password</InputLabel>
                 <Input
@@ -132,22 +159,12 @@ class InputAdornments extends React.Component {
                     }
                 />
                 </FormControl>
-                <Button variant="contained"  
-                className={classes.button}
-                onClick = {() => this.handleClickLogin(this.state)}
-                >LOGIN</Button>
-                
-                    
+
                 <Button variant="contained"  
                 className={classes.button}
                 onClick = {this.handleClickSignup}
-                >New User</Button>
-            </div>
-            
-
-            {this.state.showSignUP? <SingUp handleClickLogin={this.handleClickLogin}/> : null}
-
-           
+                >SingUp</Button>
+        </div>
       </div>
     );
   }

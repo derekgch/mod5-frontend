@@ -102,17 +102,24 @@
   position: absolute;  
   margin-left: auto;
   margin-right: auto;
-  left: 0;
+  left: 30%;
   right: 0;
-  top: 15vw;
+  top: 13vw;
+  width: 150%;
+  height: auto;
 }
 
 .loginContainer{
   position: absolute;  
-  margin-left: auto;
-  margin-right: auto;
-  left: 0;
-  right: 0;
+  align-self: center;
+
+  left: 30%;
+  top: 20%;
+}
+
+.signUpContainer{
+  position: absolute;  
+  align-self: center;
   top: 15vw;
 }
 
@@ -141,4 +148,15 @@
   left: 0;
   right: 0;
   top: 20vw;
+}
+
+.instructionKeyBoard{
+  opacity: .9;
+  z-index: -2;
+}
+
+.strech{
+  /* background-size: cover; */
+  width:70%;
+  height:70%;
 }

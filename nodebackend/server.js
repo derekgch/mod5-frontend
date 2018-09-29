@@ -6,10 +6,11 @@ var socket = require('socket.io');
 
 var app = express();
 
+let port = 5000
 
 
-server = app.listen(5000, function(){
-    console.log('server is running on port 5000')
+server = app.listen(port, '0.0.0.0', function(){
+    console.log(`server is running on port ${port}`)
 });
 
 
@@ -126,6 +127,8 @@ io.on('connection', (client) => {
     })
 
     client.on('BULLET_HIT', data =>{
+        console.log(data);
+        
         if(gameStart && data.op === currentOp){
             players[data.otherPlayer].hp -= 20;
             players[client.id].score +=10;
@@ -141,8 +144,10 @@ io.on('connection', (client) => {
 
     client.on("UNMOUNT", ()=>{
         console.log("unmount event");
-        
-        emitGameOver(client.id)
+        players[client.id].hp =100;
+        players[client.id].ready =false;
+        gameStart = false;
+        // emitGameOver(client.id)
     })
 
 

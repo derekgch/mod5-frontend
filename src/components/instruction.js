@@ -13,7 +13,7 @@ class instruction extends Component {
         return false;
     }
     render() {
-        const textToDisplay = this.props.hint ? ` HINT:${this.props.hint}` : "ARROW KEYS : move left right and cycle,  space: fire"
+        const textToDisplay = this.props.hint ? ` HINT:${this.props.hint}` : "~  ARROW KEYS : move left right and cycle,  SPACE: fire"
         return (
             <div className="insctructionDiv" >
                 <svg width={window.innerWidth}>

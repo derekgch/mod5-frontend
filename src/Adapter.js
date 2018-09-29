@@ -1,11 +1,15 @@
-const URL="http://localhost:4000/"
-const WordUrl = "http://localhost:4000/api/v1/"
-const GAMETOP5 = "http://localhost:4000/games/top"
+export const ip = "localhost"
+// export const ip = "192.168.1.137"
+
+const URL=`http://${ip}:4000/`
+const WordUrl = `http://${ip}:4000/api/v1/`
+const GAMETOP5 = `http://${ip}:4000/games/top`
 
 // words, long, hard
 
 
 class Adapter {
+    
 
     static postLogin(name, pw){
         let config ={
@@ -19,6 +23,7 @@ class Adapter {
     }
 
     static postSignUp(user_obj){
+        console.log(user_obj)
         let config ={
             method: 'POST', 
             headers: {
@@ -65,7 +70,8 @@ class Adapter {
             },
             body: JSON.stringify({
                 ...data,
-                type:"Multi"
+                user_id: data.winner, 
+                type:"multi"
             })
         }
         return fetch(`${URL}games/`, config)

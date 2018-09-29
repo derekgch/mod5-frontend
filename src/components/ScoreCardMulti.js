@@ -22,14 +22,18 @@ const styles = theme => ({
 });
 
 function generate(data) {
+    let sorted = []
 
-  return data.map(e =>{
-      let user = e.user
-    if(e.user.length < 1) user ='guest'
+    sorted = Object.keys(data).sort( (a, b) => data[b] - data[a]  )
+
+    console.log(sorted)
+  return sorted.map(e =>{
+      let user = e
+    if(e == "") user ='guest'
     
-   return <ListItem key={data[e]+e.point}>
+   return <ListItem key={data[e]+user}>
         <ListItemText
-            primary= {`User: ${user} Points: ${e.point} `}                    
+            primary= {`User: ${user} Wins: ${data[e]} `}                    
         />
     </ListItem>
   }

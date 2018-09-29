@@ -16,7 +16,7 @@ class FirePlatform extends Component {
     }
 
     translatePosition = (pX, pY) => {
-        let size = 100;
+        let size = 120;
         let angle = 30/180*Math.PI
         let nextP ={x: Math.floor(pX-size/2), y: Math.floor(pY+Math.cos(angle)*size)} 
         let lastP = {x: Math.floor(pX+size/2), y: Math.floor(pY+Math.cos(angle)*size)}
@@ -30,10 +30,10 @@ class FirePlatform extends Component {
         if(operator === "/") operator ="÷"
         return (
             
-            <svg width="110" height="110">
+            <svg width="140" height="120">
             <g>
                 <path d={testPath}  fill="#FF8A65" stroke="#95a5a6" strokeWidth="5" />
-                <text x={this.props.x-23} y={this.props.y+80} {...textStyle}>{operator}</text>
+                <text x={this.props.x-23} y={this.props.y+90} {...textStyle}>{operator}</text>
             </g>
             </svg>
             

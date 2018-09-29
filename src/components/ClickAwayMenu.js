@@ -7,10 +7,8 @@ import Paper from '@material-ui/core/Paper';
 import grey from '@material-ui/core/colors/grey';
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import red from '@material-ui/core/colors/red';
 
 
-const primary = "white"; // #F44336
 
 
 const styles = theme => ({
@@ -80,6 +78,7 @@ class ClickAway extends React.Component {
               <MenuItem onClick={this.handleClickMenu} id="math">Math</MenuItem>
               <MenuItem onClick={this.handleClickMenu} id="word" >Word</MenuItem>
               <MenuItem onClick={this.handleClickMenu} id="multi" >Multi</MenuItem>
+              <MenuItem onClick={this.handleClickMenu} id="readme" >Readme</MenuItem>
 
               {this.props.userId? 
               <MenuItem onClick={this.handleClickMenu} id="list" >Word List</MenuItem>
