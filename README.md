@@ -15,7 +15,6 @@ Nodejs with expess
 Socket.io
 PostgreSQL  
 Materialized UI
-CSS
 
 ## Installation
 ### Frontend: 
