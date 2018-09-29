@@ -13,8 +13,10 @@ React - Javascript
 Ruby on Rails  
 Nodejs with expess
 Socket.io
-PostgreSQL  
+PostgreSQL 
 Materialized UI
+
+
 
 ## Installation
 ### Frontend: 
