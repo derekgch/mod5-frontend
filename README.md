@@ -6,8 +6,7 @@ The Play&Learn is a full stack single page web app that allows users to play mat
 To install the Play&Learn, first fork and clone the frontend and backend repo. 
 
 
-## Screenshots
-Include logo/demo screenshot etc.
+
 
 ## Tech/framework used
 React - Javascript  
@@ -16,12 +15,6 @@ Nodejs with expess
 PostgreSQL  
 Materialized UI
 CSS
-
-## Features
-What makes your project stand out?
-
-## Code Example
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
 
 ## Installation
 ### Frontend: 
@@ -32,15 +25,6 @@ navigate into frontend/nodebackend/, run `node server.js`
 
 ### Backend
 run `bundle install`, followed by `rails db:create && rails db:migrate`. Finally run `rails s -p 4000`, which will launch the API on a local server.
-
-
-
-## How to use?
-
-
-## Contribute
-
-Let people know how they can contribute into your project. A [contributing guideline](https://github.com/zulip/zulip-electron/blob/master/CONTRIBUTING.md) will be a big plus.
 
 
 
