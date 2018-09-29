@@ -307,7 +307,7 @@ class multiContainer extends Component {
         case ' ':
             event.preventDefault();
 
-            if((now-this.props.lastFired) > 500){
+            if((now-this.props.lastFired) > 100){
                 this.reportFireEvent(now);
                 this.props.setFired("FIRE_EVENT", [...active, this.projectile(now)], now)
             }

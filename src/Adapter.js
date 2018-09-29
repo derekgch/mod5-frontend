@@ -1,4 +1,4 @@
-export const ip = "192.168.3.135"
+export const ip = "localhost"
 
 const URL=`http://${ip}:4000/`
 const WordUrl = `http://${ip}:4000/api/v1/`
