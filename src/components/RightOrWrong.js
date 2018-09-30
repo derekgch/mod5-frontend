@@ -55,12 +55,12 @@ class RightOrWrong extends Component {
     }
     
     right=()=>{
-        return <text {...rightStyle} x={0} y={100}> You are a genius ! </text>
+        return <text {...rightStyle} x={0} y={100}> Genius! </text>
     }
 
     
     wrong=()=>{
-        return <text {...textStyle} x={0} y={100} > What an idoit!</text>
+        return <text {...textStyle} x={0} y={100} > Idoit!</text>
     }
 
     render() {
