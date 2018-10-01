@@ -48,8 +48,7 @@ class InputAdornments extends React.Component {
     this.resetState();
   }
 
-  handleChange = prop => event => {
-    
+  handleChange = prop => event => {  
     this.setState({ [prop]: event.target.value });
   };
 
@@ -88,6 +87,15 @@ class InputAdornments extends React.Component {
     this.setState({showSignUP: !this.state.showSignUP})
   }
 
+  handleGuestLogin = () =>{
+    this.setState({
+      password:"guest",
+      user_name: "guest"
+    }, ()=>{
+      this.handleClickLogin(this.state)
+    })
+  }
+
   handleFetchError = (response) => {
     if(response.ok){
         return response.json()
@@ -105,7 +113,8 @@ class InputAdornments extends React.Component {
     return (
         <div className = "loginContainer">
             <div className={classes.root}>
-                
+
+                  
                 <TextField
                 label="User name"
                 value={this.state.user_name}
@@ -137,11 +146,17 @@ class InputAdornments extends React.Component {
                 onClick = {() => this.handleClickLogin(this.state)}
                 >LOGIN</Button>
                 
-                    
+                <Button variant="contained"  
+                className={classes.button}
+                onClick = {this.handleGuestLogin}
+                >Login As Guest</Button>
+
                 <Button variant="contained"  
                 className={classes.button}
                 onClick = {this.handleClickSignup}
                 >New User</Button>
+
+
             </div>
             
 
