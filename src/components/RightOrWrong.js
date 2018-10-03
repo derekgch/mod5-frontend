@@ -55,19 +55,19 @@ class RightOrWrong extends Component {
     }
     
     right=()=>{
-        return <text {...rightStyle} x={0} y={100}> Genius! </text>
+        return <text {...rightStyle} x={0} y={100}> Right! </text>
     }
 
     
     wrong=()=>{
-        return <text {...textStyle} x={0} y={100} > Idoit!</text>
+        return <text {...textStyle} x={0} y={100} > Wrong!</text>
     }
 
     render() {
         const toDisplay = this.props.right ? this.right() : this.wrong();
         return (
             <div className="wrContainer" ref={c => this.container = c}>
-                <svg width="800" >
+                <svg width="400" >
                     {toDisplay}
                 </svg>
             </div>
