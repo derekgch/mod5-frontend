@@ -8,6 +8,7 @@ import {login, clickLogin, logout, clickMenu, setScore} from './actions'
 import WordList from './components/WordList';
 import ScoreBoard from './components/ScoreBoard'
 import Multiplayer from './components/multi/multiContainer'
+import Room from './components/multi/room/Room'
 import Info from './components/info';
 
 
@@ -50,9 +51,13 @@ class App extends Component {
         break;
 
       case "multi":
-       display = <Multiplayer 
+      //  display = <Multiplayer 
+      //       score = {this.props.score}
+      //       setScore={this.props.setScore}/>;
+      display = <Room 
             score = {this.props.score}
             setScore={this.props.setScore}/>;
+      
         break;
 
       case "score":
