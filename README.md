@@ -26,6 +26,8 @@ navigate into frontend/nodebackend/, run `node server.js`
 ### Backend
 run `bundle install`, followed by `rails db:create && rails db:migrate`. Finally run `rails s -p 4000`, which will launch the API on a local server.
 
+## Video Demo
+https://www.youtube.com/watch?v=HcYxzMOqLIA
 
 
 ## Authors
