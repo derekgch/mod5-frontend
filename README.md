@@ -1,9 +1,9 @@
 # Play&Learn
-The Play&Learn is a full stack single page web app that allows users to play math game , word game and real time multiplayer mode to verse each other based on the math question given.
+Play&Learn is a single page web app that allows users to play math game , word game and real time multiplayer mode to verse each other based on the math question given.
 
 
 ## Getting Started
-To install the Play&Learn, first fork and clone the frontend and backend repo. 
+To install Play&Learn, first fork and clone the frontend and backend repo. 
 
 
 
