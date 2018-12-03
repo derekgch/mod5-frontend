@@ -38,7 +38,7 @@ function ButtonAppBar(props) {
             style={{fontSize: "20px"}}>Score: {props.score} </Button>
             
           </Typography>
-          {loginOrOut}
+          {/* {loginOrOut} */}
 
         </Toolbar>
       </AppBar>

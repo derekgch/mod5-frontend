@@ -76,13 +76,13 @@ class ClickAway extends React.Component {
               <Paper className={classes.paper}>
 
               <MenuItem onClick={this.handleClickMenu} id="math">Math</MenuItem>
-              <MenuItem onClick={this.handleClickMenu} id="word" >Word</MenuItem>
-              <MenuItem onClick={this.handleClickMenu} id="multi" >Multi</MenuItem>
+              {/* <MenuItem onClick={this.handleClickMenu} id="word" >Word</MenuItem> */}
+              {/* <MenuItem onClick={this.handleClickMenu} id="multi" >Multi</MenuItem> */}
               <MenuItem onClick={this.handleClickMenu} id="readme" >Readme</MenuItem>
 
-              {this.props.userId? 
-              <MenuItem onClick={this.handleClickMenu} id="list" >Word List</MenuItem>
-              : null}
+              {/* // {this.props.userId? 
+              // <MenuItem onClick={this.handleClickMenu} id="list" >Word List</MenuItem>
+              // : null} */}
 
 
               </Paper>

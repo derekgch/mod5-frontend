@@ -2,6 +2,11 @@
   text-align: center;
 }
 
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
@@ -102,7 +107,7 @@
   position: absolute;  
   margin-left: auto;
   margin-right: auto;
-  left: 30%;
+  left: 20%;
   right: 0;
   top: 13vw;
   width: 150%;
