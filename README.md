@@ -30,6 +30,11 @@ run `bundle install`, followed by `rails db:create && rails db:migrate`. Finally
 https://www.youtube.com/watch?v=HcYxzMOqLIA
 
 
+### Limited Single player demo
+
+https://derekgch.github.io/play-and-learn-frontend/
+
+
 ## Authors
 Derek Chen  
 
