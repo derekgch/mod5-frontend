@@ -105,7 +105,7 @@ class GameContainer extends Component {
    }
 
    checkAnswer=(userAns) => {
-       console.log("checking ans", userAns, this.state.filledOp, this.state.question)
+    //    console.log("checking ans", userAns, this.state.filledOp, this.state.question)
         if( userAns!== this.state.answer){
             this.setState({filledOp:[], userEq: [], userAns:null, hp: this.state.hp -20 }, ()=>{
                 if(this.state.hp < 1) {
@@ -131,7 +131,7 @@ class GameContainer extends Component {
             let userAns =calAnswer(userEq);
             if(!Number.isInteger(userAns)) userAns = parseFloat (userAns.toPrecision(4));
             if(userEq.length > 0){
-                console.log("user checking")
+                // console.log("user checking")
                 this.setState({checkingAns: true, userEq , userAns},()=>{
                     setTimeout(() => {                        
                         this.setState({checkingAns:false }, ()=> this.checkAnswer(userAns));               

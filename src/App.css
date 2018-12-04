@@ -3,9 +3,10 @@
 }
 
 
-html, body {
+ body {
   max-width: 100%;
   overflow-x: hidden;
+  /* overflow-y: visible; */
 }
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
