@@ -12,19 +12,19 @@ self.__precacheManifest = [
     "url": "/play-and-learn-frontend/static/js/runtime~main.cda3fc29.js"
   },
   {
-    "revision": "12ae0fc9c79a2af32f64",
-    "url": "/play-and-learn-frontend/static/js/main.12ae0fc9.chunk.js"
+    "revision": "2b3cc3971008b0c0f69b",
+    "url": "/play-and-learn-frontend/static/js/main.2b3cc397.chunk.js"
   },
   {
     "revision": "4bbc6b62be5bdcdc93e6",
     "url": "/play-and-learn-frontend/static/js/1.4bbc6b62.chunk.js"
   },
   {
-    "revision": "12ae0fc9c79a2af32f64",
-    "url": "/play-and-learn-frontend/static/css/main.eff19328.chunk.css"
+    "revision": "2b3cc3971008b0c0f69b",
+    "url": "/play-and-learn-frontend/static/css/main.6a164dfc.chunk.css"
   },
   {
-    "revision": "f2686b91362eb1f4eb4c89a97f49fd56",
+    "revision": "d9fc6c30af04213a923967208829a0b8",
     "url": "/play-and-learn-frontend/index.html"
   }
 ];

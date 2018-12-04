@@ -1,15 +1,15 @@
 {
-  "main.css": "/play-and-learn-frontend/static/css/main.eff19328.chunk.css",
-  "main.js": "/play-and-learn-frontend/static/js/main.12ae0fc9.chunk.js",
-  "main.js.map": "/play-and-learn-frontend/static/js/main.12ae0fc9.chunk.js.map",
+  "main.css": "/play-and-learn-frontend/static/css/main.6a164dfc.chunk.css",
+  "main.js": "/play-and-learn-frontend/static/js/main.2b3cc397.chunk.js",
+  "main.js.map": "/play-and-learn-frontend/static/js/main.2b3cc397.chunk.js.map",
   "static/js/1.4bbc6b62.chunk.js": "/play-and-learn-frontend/static/js/1.4bbc6b62.chunk.js",
   "static/js/1.4bbc6b62.chunk.js.map": "/play-and-learn-frontend/static/js/1.4bbc6b62.chunk.js.map",
   "runtime~main.js": "/play-and-learn-frontend/static/js/runtime~main.cda3fc29.js",
   "runtime~main.js.map": "/play-and-learn-frontend/static/js/runtime~main.cda3fc29.js.map",
-  "static/css/main.eff19328.chunk.css.map": "/play-and-learn-frontend/static/css/main.eff19328.chunk.css.map",
+  "static/css/main.6a164dfc.chunk.css.map": "/play-and-learn-frontend/static/css/main.6a164dfc.chunk.css.map",
   "static/media/sd.png": "/play-and-learn-frontend/static/media/sd.c66b9051.png",
   "static/media/keyboard.png": "/play-and-learn-frontend/static/media/keyboard.3783a97e.png",
   "index.html": "/play-and-learn-frontend/index.html",
-  "precache-manifest.3f1862344c4d8c8ff8f08c5aac5c27dc.js": "/play-and-learn-frontend/precache-manifest.3f1862344c4d8c8ff8f08c5aac5c27dc.js",
+  "precache-manifest.9c96afeadc02b1bf9a8e4d29fe9c2a84.js": "/play-and-learn-frontend/precache-manifest.9c96afeadc02b1bf9a8e4d29fe9c2a84.js",
   "service-worker.js": "/play-and-learn-frontend/service-worker.js"
 }
